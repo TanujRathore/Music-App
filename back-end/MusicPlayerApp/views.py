@@ -28,7 +28,6 @@ def employeeApi(request,id=0):
         return JsonResponse("Failed to Add.", safe=False)
 
     elif request.method=='PUT':
-
         employee_data = JSONParser().parse(request)
         employee=Employees.objects.get(EmployeeId=employee_data['EmployeeId']) 
         employee_serializer=EmployeeSerializer(employee, data=employee_data)
@@ -40,4 +39,4 @@ def employeeApi(request,id=0):
     elif request.method=='DELETE':
         employee=Employees.objects.get(EmployeeId=id)
         employee.delete()
-        return JsonResponse ("Deleted Succeffully!!", safe=False)
+        return JsonResponse ("Deleted Successfully!!", safe=False)

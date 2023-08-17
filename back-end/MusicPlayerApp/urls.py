@@ -3,5 +3,5 @@ from MusicPlayerApp import views
 
 urlpatterns = [
     path('employee/', views.employeeApi),
-    re_path(r'^employee/(?P<pk>[0-9]+)$', views.employeeApi),
+    re_path(r'^employee/(?P<id>[0-9]*)$', views.employeeApi),
 ]
