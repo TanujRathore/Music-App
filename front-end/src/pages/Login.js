@@ -1,11 +1,11 @@
 import React from 'react';
 import LoginForm from '../components/LoginForm';
-import backgroundImage from '../images/Martin-Luther-view-village_small-scaled.jpg'; 
+ import backgroundImage from '../images/bluebackground.png'; 
 
-export default function Login() {
+ export default function Login() {
   const backgroundStyle = {
     backgroundImage: `url(${backgroundImage})`,
-    backgroundSize: 'cover',
+    backgroundSize: 'cover', 
     backgroundPosition: 'center',
     minHeight: '100vh',
   };
@@ -16,6 +16,7 @@ export default function Login() {
     </div>
   );
 }
+
 
 
 

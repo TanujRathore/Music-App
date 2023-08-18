@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './usercontext';
-import Login from './pages/Login'; // 确保使用正确的组件名（首字母大写的 Login，而不是小写的 login）
+import Login from './pages/Login'; 
 import Home from './pages/Home'
+import Signup from './pages/SignUp';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} /> 
+        <Route path="/signup" element={<Signup />} />
         </Routes>
       </UserProvider>
     </Router>
