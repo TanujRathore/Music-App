@@ -8,31 +8,34 @@ export default function LoginForm() {
 
   return (
     <Card className="p-4 custom-card">
-      <Card.Header className="text-center custom-cardheader ">用户登录</Card.Header>
+      <Card.Header className="text-center custom-cardheader ">User Log In</Card.Header>
       <Card.Body>
         <Form onSubmit={loginUser}>
           <Form.Group className="mb-3" controlId="username">
-            <Form.Label className='custom-formlabel'>居民姓名 Name：</Form.Label>
+            <Form.Label className='custom-formlabel'>Name：</Form.Label>
             <Form.Control
               type="text"
-              placeholder="请输入居民的姓名"
+              placeholder="Enter your name here"
               maxLength="30"
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="password">
-            <Form.Label className='custom-formlabel'>密码 Password:</Form.Label>
+            <Form.Label className='custom-formlabel'>Password:</Form.Label>
             <Form.Control
               type="password"
-              placeholder="请输入您的密码"
+              placeholder="Enter password here"
               maxLength="30"
             />
+            <div className="mt-2">
+              <a href="re-identification" className='underline-on-hover'>I forgot my password</a>
+            </div>
           </Form.Group>
           <Button variant="primary" type="submit" className="w-100">
-            登录
+            Log in
           </Button>
           <div className="text-center mt-3">
-            还没有账户？
-            <a href="sign-up"> 立即注册</a>
+            Not a member yet?
+            <a href="sign-up" className='underline-on-hover'> Sign up now</a>
           </div>
         </Form>
       </Card.Body>
