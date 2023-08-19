@@ -1,18 +1,22 @@
 import React from 'react';
 import LoginForm from '../components/LoginForm';
- import backgroundImage from '../images/bluebackground.png'; 
+import backgroundImage from '../images/bluebackground.png';
+import HomeNavbar from '../components/HomeNavbar'; 
 
- export default function Login() {
+export default function Login() {
   const backgroundStyle = {
     backgroundImage: `url(${backgroundImage})`,
-    backgroundSize: 'cover', 
+    backgroundSize: 'cover',
     backgroundPosition: 'center',
     minHeight: '100vh',
   };
 
   return (
-    <div style={backgroundStyle} className="d-flex justify-content-center align-items-center">
-      <LoginForm />
+    <div>
+      <HomeNavbar />
+      <div style={backgroundStyle} className="d-flex justify-content-center align-items-center">
+        <LoginForm />
+      </div>
     </div>
   );
 }

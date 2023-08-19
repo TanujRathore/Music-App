@@ -10,9 +10,9 @@ from MusicPlayerApp.models import Employees
 
 from MusicPlayerApp.serializers import EmployeeSerializer
 
+from django.core.files.storage import default_storage
 
 @csrf_exempt
-
 def employeeApi(request,id=0):
     if request.method=='GET':
         employees = Employees.objects.all()
@@ -40,3 +40,14 @@ def employeeApi(request,id=0):
         employee=Employees.objects.get(EmployeeId=id)
         employee.delete()
         return JsonResponse ("Deleted Successfully!!", safe=False)
+    
+@csrf_exempt
+def SaveFile(request):
+    if request.method == 'POST':
+        file = request.FILES.get('file')  # You can name the input 'file' or something descriptive
+        if file:
+            file_name = default_storage.save(file.name, file)
+            return JsonResponse({"file_name": file_name}, status=200)
+        else:
+            return JsonResponse({"error": "No file uploaded"}, status=400)
+    return HttpResponseBadRequest('Invalid request method')
