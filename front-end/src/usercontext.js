@@ -25,7 +25,7 @@ export const UserProvider = ({ children }) => {
   const loginUser = async (username, role) => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + 'api/token/',
+        process.env.REACT_APP_BACKEND_URL + 'user/token/',
         {
           method: 'POST',
           headers: {
@@ -55,7 +55,7 @@ export const UserProvider = ({ children }) => {
   const registerUser = async (username, role) => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + 'api/register/',
+        process.env.REACT_APP_BACKEND_URL + 'user/register/',
         {
           method: 'POST',
           headers: {

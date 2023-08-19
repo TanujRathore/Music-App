@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     'rest_framework',
-    'MusicPlayerApp.apps.MusicplayerappConfig'
+    'MusicPlayerApp.apps.MusicplayerappConfig',
+    "LoginAPI.apps.LoginapiConfig",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
