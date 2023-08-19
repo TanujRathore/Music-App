@@ -45,10 +45,10 @@ export default function LoginForm() {
             <Card.Body>
               <Form onSubmit={(e) => handleFormSubmit(e, 'family_member')}>
                 <Form.Group className="mb-3" controlId="username">
-                  <Form.Label className="text-center custom-formlabel">Family Member Name</Form.Label>
+                  <Form.Label className="text-center custom-formlabel">Resident Name</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter your name without spaces"
+                    placeholder="Enter resident's name without spaces"
                     maxLength="30"
                     className="custom-form-control"
                   />
