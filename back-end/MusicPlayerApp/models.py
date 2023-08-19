@@ -8,3 +8,6 @@ class Employees(models.Model):
 class Musics(models.Model):
     MusicID = models.AutoField(primary_key=True)
     MusicName = models.CharField(max_length=100)
+class UserRole(models.Model):
+    username = models.CharField(max_length=100,primary_key=True)
+    role = models.CharField(max_length=100)

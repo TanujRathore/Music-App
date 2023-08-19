@@ -1,7 +1,7 @@
 # serializers.py
 
 from rest_framework import serializers
-from .models import UserRole
+from MusicPlayerApp.models import UserRole
 
 class UserRoleSerializer(serializers.ModelSerializer):
     class Meta:

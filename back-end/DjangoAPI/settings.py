@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "corsheaders",
     'rest_framework',
     'MusicPlayerApp.apps.MusicplayerappConfig',
-    "UserAPP.apps.LoginapiConfig",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
