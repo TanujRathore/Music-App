@@ -55,5 +55,19 @@ def manageAPI(request,name=0):
             userRole.delete()
             return JsonResponse ("Deleted Successfully!!", safe=False)
         except:
-            return JsonResponse ("User name does not exist.", safe=False)
-            
+            return JsonResponse ("User does not exist.", safe=False)
+
+
+@csrf_exempt
+def loginAPI(request,name=0):
+    if request.method == 'POST':
+        user_data = JSONParser().parse(request)
+        
+        # Check if the username exists
+        if UserRole.objects.filter(username=user_data['username']).exists():
+            return JsonResponse("Welcome "+user_data['username'], safe=False)
+
+        else:
+            return JsonResponse ("User does not exist.", safe=False)
+    else:
+        return JsonResponse ("Bad request type", safe=False)
