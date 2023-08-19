@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import { Card, Form, Button, Row, Col } from 'react-bootstrap';
 import UserContext from '../usercontext';
-import logoImage from '../images/MLH-Logo.jpg'; // 请替换为您的图像路径
+import logoImage from '../images/MLH-Logo.jpg';
 import './customCss.css';
+import { Link } from 'react-router-dom';
 
 export default function LoginForm() {
   const { loginUser } = useContext(UserContext);
@@ -32,7 +33,7 @@ export default function LoginForm() {
                     className="custom-form-control"
                   />
                 </Form.Group>
-                <Button variant="primary" type="submit" className="w-100 custom-button">
+                <Button as={Link} to="/staffmain" variant="primary" type="submit" className="w-100 custom-button">
                   Log in as Staff
                 </Button>
               </Form>

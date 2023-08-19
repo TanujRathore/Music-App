@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card, Button, Nav, Navbar, Carousel } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Navbar, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import backgroundImage from '../images/bluebackground.png';
 import logoImage from '../images/MLH-Logo.jpg';
@@ -30,12 +30,12 @@ function Home() {
                               Music Library
                             </span>
                     </Navbar.Brand>
-                    <Nav className="me-auto">
+                    {/* <Nav className="me-auto">
                         <Nav.Link href="#link">
                             Gallery
                             </Nav.Link>
-                    </Nav>
-                    <Button as={Link} to="/signup" variant="outline-primary" className="ml-auto">
+                    </Nav> */}
+                    <Button as={Link} to="/signup" variant="outline-primary" className="ml-auto custom-button2">
                         Sign Up
                     </Button>
                 </Container>

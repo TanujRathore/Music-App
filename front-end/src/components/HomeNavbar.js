@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Container, Button } from 'react-bootstrap';
 import logoImage from '../images/MLH-Logo.jpg';
+import './customCss.css';
 
 export default function HomeNavbar() {
   return (
@@ -17,7 +18,7 @@ export default function HomeNavbar() {
           />
           <span className="custom-font">Music Library</span>
         </Navbar.Brand>
-        <Button as={Link} to="/" variant="outline-primary" className="ml-auto">
+        <Button as={Link} to="/" variant="outline-primary" className="ml-auto custom-button2">
           Home
         </Button>
       </Container>
