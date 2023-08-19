@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import SignupForm from '../components/SignUpForm';
 import backgroundImage from '../images/bluebackground.png';
+import HomeNavbar from '../components/HomeNavbar'; 
 
 function Signup() {
   const backgroundStyle = {
@@ -12,6 +13,8 @@ function Signup() {
   };
 
   return (
+    <div>
+      <HomeNavbar />
     <div style={backgroundStyle} className="d-flex justify-content-center align-items-center">
       <Container>
         <Row className="justify-content-center mt-5">
@@ -20,6 +23,7 @@ function Signup() {
           </Col>
         </Row>
       </Container>
+    </div>
     </div>
   );
 }
