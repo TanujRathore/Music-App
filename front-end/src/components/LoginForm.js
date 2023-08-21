@@ -9,8 +9,8 @@ export default function LoginForm() {
   const { loginUser } = useContext(UserContext);
 
   const handleFormSubmit = (e, role) => {
-    e.preventDefault();
-    loginUser(e, role);
+    e.preventDefault(); //阻止表单默认的提交行为
+    loginUser(e, role); //调用 loginUser 函数，将表单事件对象 e 和 role 作为参数传递给它
   };
 
   return (

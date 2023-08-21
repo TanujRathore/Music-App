@@ -17,20 +17,40 @@ export default function SignupForm() {
     const username = e.target.username.value;
 
     if (selectedRole === 'staff' || selectedRole === 'family_member') {
-      await registerUser(username, selectedRole);
-      setShowSuccessToast(true);
-      setTimeout(() => {
-        setShowSuccessToast(false);
-      }, 5000); // Toast will be shown for 5 seconds
+      // Check if username is available
+      const isUsernameAvailable = await checkUsernameAvailability(username);
+
+      if (isUsernameAvailable) {
+        await registerUser(username, selectedRole);
+        setShowSuccessToast(true);
+        setTimeout(() => {
+          setShowSuccessToast(false);
+        }, 5000); // Toast will be shown for 5 seconds
+      } else {
+        setErrorMessage('Username is already taken. Please choose another.');
+      }
     } else {
       console.error('Invalid role selected');
     }
   };
 
+  const checkUsernameAvailability = async (username) => {
+    try {
+      const response = await fetch(`/api/check-username/${username}`); //API？
+      const data = await response.json();
+      return data.available; //need a boolean value
+    } catch (error) {
+      throw new Error('Error checking username availability:', error);
+    }
+  };
+
+  const showError = errorMessage ? <div className="error">{errorMessage}</div> : null;
+
   return (
     <Card className="p-4 custom-card">
       <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
       <Card.Body>
+      {showError}
         <Form onSubmit={handleFormSubmit}>
           <Form.Group className="mb-3" controlId="username">
             <Form.Label className="custom-formlabel">Name</Form.Label>
