@@ -52,7 +52,7 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const registerUser = async (username, role) => {
+  const registerUser = async (fullname, username, role) => {
     try {
       const response = await fetch(
         process.env.REACT_APP_BACKEND_URL + 'user/register/',
@@ -62,6 +62,7 @@ export const UserProvider = ({ children }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            fullname,
             username,
             role, 
           }),

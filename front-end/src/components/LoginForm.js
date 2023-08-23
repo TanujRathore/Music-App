@@ -28,7 +28,7 @@ export default function LoginForm() {
                   <Form.Label className="text-center custom-formlabel">Staff Name</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter your fullname without spaces"
+                    placeholder="Enter your username here"
                     maxLength="30"
                     className="custom-form-control"
                   />
@@ -49,7 +49,7 @@ export default function LoginForm() {
                   <Form.Label className="text-center custom-formlabel">Resident Name</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter resident's name without spaces"
+                    placeholder="Enter resident's username"
                     maxLength="30"
                     className="custom-form-control"
                   />
