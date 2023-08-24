@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Pagination } from 'react-bootstrap';
 import axios from 'axios';
 import backgroundImage from '../images/bluebackground.png';
-import LogoutNavbar from '../components/LogoutNavbar';
+import LogoutNavbar from '../navibars/LogoutNavbar';
 
 const ITEMS_PER_PAGE = 12;
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Container, Button } from 'react-bootstrap';
 import logoImage from '../images/MLH-Logo.jpg';
-import './customCss.css';
+import '../components/customCss.css';
 
 export default function LogoutNavbar() {
   return (

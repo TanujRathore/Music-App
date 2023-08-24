@@ -1,7 +1,7 @@
 import React from 'react';
 import LoginForm from '../components/LoginForm';
 import backgroundImage from '../images/bluebackground.png';
-import HomeNavbar from '../components/HomeNavbar'; 
+import HomeNavbar from '../navibars/HomeNavbar'; 
 
 export default function Login() {
   const backgroundStyle = {
