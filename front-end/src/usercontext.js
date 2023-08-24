@@ -25,7 +25,7 @@ export const UserProvider = ({ children }) => {
   const loginUser = async (username, role) => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + 'user/token/',
+        process.env.REACT_APP_BACKEND_URL + 'user/token/',  //API?
         {
           method: 'POST',
           headers: {
@@ -52,17 +52,18 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const registerUser = async (fullname, username, role) => {
+  const registerUser = async (firstname,lastname, username, role) => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + 'user/register/',
+        process.env.REACT_APP_BACKEND_URL + 'user/register/',   //API?
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            fullname,
+            firstname,
+            lastname,
             username,
             role, 
           }),

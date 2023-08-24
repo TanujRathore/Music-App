@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Pagination } from 'react-bootstrap';
 import axios from 'axios';
 import backgroundImage from '../images/bluebackground.png';
-import HomeNavbar from '../components/HomeNavbar';
-import addResidentImage from '../images/plus.png';
+import LogoutNavbar from '../components/LogoutNavbar';
+
+const ITEMS_PER_PAGE = 12;
 
 function ResidentPage() {
   const backgroundStyle = {
@@ -14,12 +15,10 @@ function ResidentPage() {
   };
   const [residents, setResidents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newResidentName, setNewResidentName] = useState('');
-  const [newResidentPhoto, setNewResidentPhoto] = useState(null); // State to track new resident photo
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get(process.env.REACT_APP_BACKEND_URL)
+    axios.get(process.env.REACT_APP_BACKEND_URL)  //API？
       .then(response => {
         setResidents(response.data); // Assuming the response is an array of residents
       })
@@ -28,42 +27,33 @@ function ResidentPage() {
       });
   }, []);
 
-  const filteredResidents = residents.filter(resident =>
-    resident.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleAddClick = () => {
-    setShowAddForm(true);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setCurrentPage(1);
   };
 
-  const handleFormSubmit = () => {
-    //not sure URL   PHOTOPATH?
-    axios.post(process.env.REACT_APP_BACKEND_URL, {
-      name: newResidentName,
-      photoUrl: `${process.env.REACT_APP_PHOTOPATH}/${newResidentPhoto}`
-    })
-      .then(response => {
-        // Assuming the response contains the newly added resident
-        const newResident = response.data;
-        setResidents([...residents, newResident]);
-        setNewResidentName('');
-        setNewResidentPhoto(null);
-        setShowAddForm(false);
-      })
-      .catch(error => {
-        console.error('Error adding resident:', error);
-      });
+  const filteredResidents = residents.filter(resident => {
+    const fullName = `${resident.firstname} ${resident.lastname}`.toLowerCase();
+    return fullName.includes(searchTerm.toLowerCase());
+  });
+
+  const indexOfLastResident = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstResident = indexOfLastResident - ITEMS_PER_PAGE;
+  const currentResidents = filteredResidents.slice(indexOfFirstResident, indexOfLastResident);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
     <div>
-      <HomeNavbar />
+      <LogoutNavbar />
       <div style={backgroundStyle} className="d-flex flex-column">
-      <Container>
+        <Container>
           <h1 className="mb-4 text-center" style={{ color: '#fff', fontSize: '50px', fontWeight: 'bold' }}>
             Welcome to Staff Page
           </h1>
-          <Form>
+          <Form onSubmit={handleSearch}>
             <Form.Group controlId="searchTerm">
               <Form.Label className="mb-2"> Please enter the resident name to access to their own home page</Form.Label>
               <Form.Control
@@ -76,57 +66,31 @@ function ResidentPage() {
             </Form.Group>
           </Form>
           <Row>
-            {filteredResidents.map(resident => (
-              <Col key={resident.id} md={3} sm={6} xs={12}>
-                <Card className="mb-4">
-                  <div className="resident-photo">
-                    <img src={resident.photoUrl} alt={resident.name} />
-                  </div>
+            {currentResidents.map(resident => (
+              <Col key={resident.id} md={4} sm={6} xs={12}>
+                <Card className="mb-4 resident-card">
                   <Card.Body>
-                    <Card.Title>{resident.name}</Card.Title>
+                    <Card.Title className="resident-title">{resident.firstname} {resident.lastname}</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
             ))}
           </Row>
-          <div className="add-resident-button" onClick={handleAddClick}>
-            <img src={addResidentImage} alt="Add Resident" />
-          </div>
-          <Modal show={showAddForm} onHide={() => setShowAddForm(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Add New Resident</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group controlId="newResidentName">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter name"
-                    value={newResidentName}
-                    onChange={e => setNewResidentName(e.target.value)}
-                  />
-                </Form.Group>
-                <Form.Group controlId="newResidentPhoto">
-                  <Form.Label>Photo URL</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter photo URL"
-                    value={newResidentPhoto}
-                    onChange={e => setNewResidentPhoto(e.target.value)}
-                  />
-                </Form.Group>
-              </Form>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowAddForm(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={handleFormSubmit}>
-                Add
-              </Button>
-            </Modal.Footer>
-          </Modal>
+          <div className="pagination-container">
+          {filteredResidents.length > ITEMS_PER_PAGE && (
+            <Pagination className="justify-content-center">
+              {Array.from({ length: Math.ceil(filteredResidents.length / ITEMS_PER_PAGE) }, (_, i) => (
+                <Pagination.Item
+                  key={i + 1}
+                  active={i + 1 === currentPage}
+                  onClick={() => paginate(i + 1)}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+          )}
+        </div>
         </Container>
       </div>
     </div>

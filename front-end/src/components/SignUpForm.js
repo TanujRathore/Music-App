@@ -9,15 +9,20 @@ export default function SignupForm() {
   const [selectedRole, setSelectedRole] = useState('');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
 
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
   };
 
-  const handleFullNameChange = (event) => {
-    setFullName(event.target.value);
+  const handleFirstNameChange = (event) => {
+    setFirstName(event.target.value);
+  };
+
+  const handleLastNameChange = (event) => {
+    setLastName(event.target.value);
   };
 
   const handleUsernameChange = (event) => {
@@ -33,7 +38,7 @@ export default function SignupForm() {
         const isUsernameAvailable = await checkUsernameAvailability(username);
 
         if (isUsernameAvailable) {
-          await registerUser(fullName, username, selectedRole);
+          await registerUser(firstName, lastName, username, selectedRole);
           setShowSuccessToast(true);
           setTimeout(() => {
             setShowSuccessToast(false);
@@ -51,9 +56,9 @@ export default function SignupForm() {
 
   const checkUsernameAvailability = async (username) => {
     try {
-      const response = await fetch(`/api/check-username/${username}`); //API?
+      const response = await fetch(`/api/check-username/${username}`);
       const responseData = await response.json();
-  
+
       if (responseData.status === 404) {
         return false; // Username not available
       } else if (responseData.status === 201) {
@@ -71,20 +76,32 @@ export default function SignupForm() {
 
   return (
     <Card className="p-4 custom-card">
-      <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
-      <Card.Body>
+    <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
+    <Card.Body>
       {showError}
-        <Form onSubmit={handleFormSubmit}>
-          <Form.Group className="mb-3" controlId="fullName">
-            <Form.Label className="custom-formlabel">Full Name</Form.Label>
+      <Form onSubmit={handleFormSubmit}>
+        <div className="d-flex mb-3">
+          <Form.Group controlId="firstName" className="flex-fill me-2">
+            <Form.Label className="custom-formlabel">First Name</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter your full name"
+              placeholder="Enter your first name"
               maxLength="50"
-              value={fullName}
-              onChange={handleFullNameChange}
+              value={firstName}
+              onChange={handleFirstNameChange}
             />
           </Form.Group>
+          <Form.Group controlId="lastName" className="flex-fill ms-2">
+            <Form.Label className="custom-formlabel">Last Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter your last name"
+              maxLength="50"
+              value={lastName}
+              onChange={handleLastNameChange}
+            />
+          </Form.Group>
+        </div>
           <Form.Group className="mb-3" controlId="username">
             <Form.Label className="custom-formlabel">Username</Form.Label>
             <Form.Control
