@@ -56,12 +56,12 @@ export default function SignupForm() {
 
   const checkUsernameAvailability = async (username) => {
     try {
-      const response = await fetch(`/api/check-username/${username}`);
+      const response = await fetch(`/api/check-username/${username}`); //API to check the availability of {username}
       const responseData = await response.json();
 
-      if (responseData.status === 404) {
+      if (responseData.status === 400) {  //404?
         return false; // Username not available
-      } else if (responseData.status === 201) {
+      } else if (responseData.status === 201) { //201?
         return true; // Username available
       } else {
         throw new Error(`Unexpected response status: ${responseData.status}`);
