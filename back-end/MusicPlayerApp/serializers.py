@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from MusicPlayerApp.models import Employees, Musics
+from MusicPlayerApp.models import MusicList, Musics
 
-class EmployeeSerializer(serializers.ModelSerializer):
+class MusicListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Employees
-        fields = ('EmployeeId',
-                'EmployeeName',
-                'profile_pic')
+        model = MusicList
+        fields = ('MusicListId',
+                'MusicListName',
+                'MusicListProfilePic')
         
 class MusicSerializer(serializers.ModelSerializer):
     class Meta:

@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('employee/', views.employeeApi),
-    re_path(r'^employee/(?P<id>[0-9]*)$', views.employeeApi),
+    path('musiclist/', views.musiclistApi),
+    re_path(r'^musiclist/(?P<id>[0-9]*)$', views.musiclistApi),
     path('upload/', views.SaveFile)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
