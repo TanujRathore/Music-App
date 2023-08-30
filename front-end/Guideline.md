@@ -33,6 +33,11 @@ Below are the steps to run the front-end application locally. Make sure you have
     ```bash
     npm install jwt-decode
     ```
+ 6. Install `axios` dependency:
+
+    ```bash
+    npm install axios
+    ```   
 
 ## Run the Application
 
