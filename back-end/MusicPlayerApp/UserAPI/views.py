@@ -16,14 +16,14 @@ def manageAPI(request,name=0):
         
         # Check if the username already exists
         if UserRole.objects.filter(username=user_data['username']).exists():
-            return JsonResponse("Username already exists.", safe=False)
+            return JsonResponse("Username already exists.", safe=False, status = 400)
 
         userRoles_serializer = UserRoleSerializer(data=user_data) 
         if userRoles_serializer.is_valid():
             userRoles_serializer.save()
-            return JsonResponse("Added Successfully!!", safe=False)
+            return JsonResponse("Added Successfully!!", safe=False, status = 201)
         
-        return JsonResponse("Failed to Add.", safe=False)
+        return JsonResponse("Failed to Add.", safe=False, status = 400)
     elif request.method == 'PUT':
         user_data = JSONParser().parse(request)
 
@@ -34,7 +34,7 @@ def manageAPI(request,name=0):
 
         # Check if the new username already exists and isn't the old username
         if user_data["newName"] != user_data["oldName"] and UserRole.objects.filter(username=user_data["newName"]).exists():
-            return JsonResponse("New username already exists.", safe=False)
+            return JsonResponse("New username already exists.", safe=False, status = 400)
 
         # save new user
         user_role_data = userRole.role
@@ -46,16 +46,16 @@ def manageAPI(request,name=0):
         new_userRole = UserRole(username=user_data["newName"], role=user_role_data)
         new_userRole.save()
 
-        return JsonResponse("Updated Successfully!!", safe=False)
+        return JsonResponse("Updated Successfully!!", safe=False, status = 201)
 
 
     elif request.method=='DELETE':
         try:
             userRole=UserRole.objects.get(username=name)
             userRole.delete()
-            return JsonResponse ("Deleted Successfully!!", safe=False)
+            return JsonResponse ("Deleted Successfully!!", safe=False, status = 201)
         except:
-            return JsonResponse ("User does not exist.", safe=False)
+            return JsonResponse ("User does not exist.", safe=False, status = 400)
 
 
 @csrf_exempt
@@ -68,6 +68,6 @@ def loginAPI(request,name=0):
             return JsonResponse("Welcome "+user_data['username'], safe=False)
 
         else:
-            return JsonResponse ("User does not exist.", safe=False)
+            return JsonResponse ("User does not exist.", safe=False, status = 400)
     else:
-        return JsonResponse ("Bad request type", safe=False)
+        return JsonResponse ("Bad request type", safe=False, status = 400)
