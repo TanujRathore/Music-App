@@ -135,5 +135,10 @@
   transform: translateX(-50%); 
   z-index: 999; 
 }
-
+.error-modal-message {
+  font-size: 20px;
+  color: #020203;
+  text-align: center;
+  padding: 15px;
+}
 

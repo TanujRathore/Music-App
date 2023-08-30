@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Card, Form, Button, Toast } from 'react-bootstrap';
+import { Card, Form, Button, Toast, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import UserContext from '../usercontext';
 import './customCss.css';
@@ -8,9 +8,10 @@ export default function SignupForm() {
   const { registerUser } = useContext(UserContext);
   const [selectedRole, setSelectedRole] = useState('');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [username, setUsername] = useState('');
 
   const handleRoleChange = (event) => {
@@ -34,51 +35,35 @@ export default function SignupForm() {
 
     if (selectedRole === 'staff' || selectedRole === 'family_member') {
       try {
-        // Check if username is available
-        const isUsernameAvailable = await checkUsernameAvailability(username);
-
-        if (isUsernameAvailable) {
           await registerUser(firstName, lastName, username, selectedRole);
           setShowSuccessToast(true);
           setTimeout(() => {
             setShowSuccessToast(false);
-          }, 5000); // Toast will be shown for 5 seconds
-        } else {
-          setErrorMessage('Username is already taken. Please choose another.');
-        }
+          }, 5000); 
       } catch (error) {
-        console.error('Error checking username availability:', error);
+        console.error('Error registering user:', error);
+        if (error.message === 'Username is already taken. Please choose another.') {
+          setErrorMessage('Username is already taken. Please choose another.');
+          setShowErrorModal(true)
+        } else if (error.message === 'Sign up failed, Please try again later.') {
+          setErrorMessage('Sign up failed. Please try again later.');
+          setShowErrorModal(true)
+        } else {
+          setErrorMessage('An error occurred. Please try again.');
+          setShowErrorModal(true)
+        }
       }
     } else {
-      console.error('Invalid role selected');
+      setErrorMessage('Invalid role selected.');
+      setShowErrorModal(true)
     }
   };
 
-  const checkUsernameAvailability = async (username) => {
-    try {
-      const response = await fetch(`/api/check-username/${username}`); //API to check the availability of {username}
-      const responseData = await response.json();
-
-      if (responseData.status === 400) {  //404?
-        return false; // Username not available
-      } else if (responseData.status === 201) { //201?
-        return true; // Username available
-      } else {
-        throw new Error(`Unexpected response status: ${responseData.status}`);
-      }
-    } catch (error) {
-      console.error('Error checking username availability:', error.message);
-      throw new Error(`Error checking username availability: ${error.message}`);
-    }
-  };
-
-  const showError = errorMessage ? <div className="error">{errorMessage}</div> : null;
 
   return (
     <Card className="p-4 custom-card">
     <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
     <Card.Body>
-      {showError}
       <Form onSubmit={handleFormSubmit}>
         <div className="d-flex mb-3">
           <Form.Group controlId="firstName" className="flex-fill me-2">
@@ -137,6 +122,18 @@ export default function SignupForm() {
             Signup successfully! You can now <Link to="/login">Log In</Link>.
           </Toast.Body>
         </Toast>
+        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body> 
+             <div className="error-modal-message">{errorMessage}</div></Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Card.Body>
     </Card>
   );

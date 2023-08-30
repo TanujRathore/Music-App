@@ -39,16 +39,16 @@ export const UserProvider = ({ children }) => {
       );
       const data = await response.json();
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         setUserTokens(data);
         setUser(jwt_decode(data.access));
         localStorage.setItem('userTokens', JSON.stringify(data));
         navigate('/home');
       } else {
-        setError('Log in failed，Please check your Name.');
+        setError('Log in failed, Please check your Name.');
       }
     } catch (error) {
-      setError('Log in failed，Please try again later.');
+      setError('Log in failed, Please try again later.');
     }
   };
 
@@ -72,11 +72,13 @@ export const UserProvider = ({ children }) => {
 
       if (response.status === 201) {
         navigate('/login');
-      } else {
-        setError('Sign up failed，Please check your Name.');
+      } else if(response.status === 400){
+        setError('Username is already taken. Please choose another.');
+      }else{
+        setError('Sign up failed, Please try again later.')
       }
     } catch (error) {
-      setError('Sign up failed，Please try again later.');
+      setError('Sign up failed, Please try again later.');
     }
   };
   const logoutUser = async () => {
