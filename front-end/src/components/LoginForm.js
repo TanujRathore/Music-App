@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Card, Form, Button, Row, Col,Modal } from 'react-bootstrap';
+import { Card, Form, Button, Row, Col, Modal } from 'react-bootstrap';
 import UserContext from '../usercontext';
 import logoImage from '../images/MLH-Logo.jpg';
 import './customCss.css';
@@ -9,21 +9,18 @@ export default function LoginForm() {
   const { loginUser } = useContext(UserContext);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [username, setUsername] = useState('')
-  const [role, setRolename] = useState('')
+  const [username, setUsername] = useState('');
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
-  const handleRoleChange = (event) => {
-    setRoleName(event.target.value);
-  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    const formRole = e.target.getAttribute('data-role'); 
     
     try {
-      await loginUser(username, role);
+      await loginUser(username, formRole);
     } catch (error) {
       console.error('Error login user:', error);
       if (error.message === 'Log in failed, Please check your username.') {
@@ -50,7 +47,7 @@ export default function LoginForm() {
           <Card className="p-4 custom-card">
             <Card.Header className="text-center custom-cardheader">Login - Staff</Card.Header>
             <Card.Body>
-              <Form onSubmit={handleFormSubmit}>
+              <Form onSubmit={handleFormSubmit} data-role="staff">
                 <Form.Group className="mb-3" controlId="username">
                   <Form.Label className="text-center custom-formlabel">Staff Name</Form.Label>
                   <Form.Control
@@ -73,7 +70,7 @@ export default function LoginForm() {
           <Card className="p-4 custom-card">
             <Card.Header className="text-center custom-cardheader">Login - Family Member</Card.Header>
             <Card.Body>
-              <Form onSubmit={handleFormSubmit}>
+              <Form onSubmit={handleFormSubmit} data-role="family_member">
                 <Form.Group className="mb-3" controlId="username">
                   <Form.Label className="text-center custom-formlabel">Resident Name</Form.Label>
                   <Form.Control
