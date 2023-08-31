@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Card, Form, Button, Row, Col } from 'react-bootstrap';
+import React, { useContext, useState } from 'react';
+import { Card, Form, Button, Row, Col,Modal } from 'react-bootstrap';
 import UserContext from '../usercontext';
 import logoImage from '../images/MLH-Logo.jpg';
 import './customCss.css';
@@ -7,11 +7,38 @@ import { Link } from 'react-router-dom';
 
 export default function LoginForm() {
   const { loginUser } = useContext(UserContext);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [username, setUsername] = useState('')
+  const [role, setRolename] = useState('')
 
-  const handleFormSubmit = (e, role) => {
-    e.preventDefault(); //prevent submit auto
-    loginUser(e, role); 
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
   };
+  const handleRoleChange = (event) => {
+    setRoleName(event.target.value);
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      await loginUser(username, role);
+    } catch (error) {
+      console.error('Error login user:', error);
+      if (error.message === 'Log in failed, Please check your username.') {
+        setErrorMessage('Log in failed, Please check your username.');
+        setShowErrorModal(true);
+      } else if (error.message === 'Log in failed, Please try again later.') {
+        setErrorMessage('Log in failed, Please try again later.');
+        setShowErrorModal(true);
+      } else {
+        setErrorMessage('An error occurred. Please try again.');
+        setShowErrorModal(true);
+      }
+    }
+  };
+
 
   return (
     <div className="d-flex flex-column align-items-center">
@@ -23,7 +50,7 @@ export default function LoginForm() {
           <Card className="p-4 custom-card">
             <Card.Header className="text-center custom-cardheader">Login - Staff</Card.Header>
             <Card.Body>
-              <Form onSubmit={(e) => handleFormSubmit(e, 'staff')}>
+              <Form onSubmit={handleFormSubmit}>
                 <Form.Group className="mb-3" controlId="username">
                   <Form.Label className="text-center custom-formlabel">Staff Name</Form.Label>
                   <Form.Control
@@ -31,6 +58,8 @@ export default function LoginForm() {
                     placeholder="Enter your username here"
                     maxLength="30"
                     className="custom-form-control"
+                    value={username}
+                    onChange={handleUsernameChange}
                   />
                 </Form.Group>
                 <Button as={Link} to="/staffmain" variant="primary" type="submit" className="w-100 custom-button">
@@ -44,7 +73,7 @@ export default function LoginForm() {
           <Card className="p-4 custom-card">
             <Card.Header className="text-center custom-cardheader">Login - Family Member</Card.Header>
             <Card.Body>
-              <Form onSubmit={(e) => handleFormSubmit(e, 'family_member')}>
+              <Form onSubmit={handleFormSubmit}>
                 <Form.Group className="mb-3" controlId="username">
                   <Form.Label className="text-center custom-formlabel">Resident Name</Form.Label>
                   <Form.Control
@@ -52,12 +81,26 @@ export default function LoginForm() {
                     placeholder="Enter resident's username"
                     maxLength="30"
                     className="custom-form-control"
+                    value={username}
+                    onChange={handleUsernameChange}
                   />
                 </Form.Group>
                 <Button variant="primary" type="submit" className="w-100 custom-button">
                   Log in as Family Member
                 </Button>
               </Form>
+              <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body> 
+             <div className="error-modal-message">{errorMessage}</div></Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
             </Card.Body>
           </Card>
         </Col>

@@ -45,7 +45,7 @@ export const UserProvider = ({ children }) => {
         localStorage.setItem('userTokens', JSON.stringify(data));
         navigate('/home');
       } else {
-        setError('Log in failed, Please check your Name.');
+        setError('Log in failed, Please check your username.');
       }
     } catch (error) {
       setError('Log in failed, Please try again later.');
