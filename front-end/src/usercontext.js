@@ -25,7 +25,7 @@ export const UserProvider = ({ children }) => {
   const loginUser = async (username, role) => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + 'user/login/',  //API?
+        'http://127.0.0.1:8000/user/login/',  //API?
         {
           method: 'POST',
           headers: {
@@ -55,7 +55,7 @@ export const UserProvider = ({ children }) => {
   const registerUser = async (firstname,lastname, username, role) => {
     try {
       const response = await fetch(
-        process.env.REACT_APP_BACKEND_URL + 'user/manage/',   //API?
+        'http://127.0.0.1:8000/user/manage/',   //API?
         {
           method: 'POST',
           headers: {
