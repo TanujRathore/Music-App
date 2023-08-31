@@ -17,16 +17,15 @@ export default function LoginForm() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const formRole = e.target.getAttribute('data-role'); 
-    
+    const Role = e.target.getAttribute('data-role'); 
     try {
-      await loginUser(username, formRole);
+      await loginUser(username, Role);
     } catch (error) {
       console.error('Error login user:', error);
-      if (error.message === 'Log in failed, Please check your username.') {
+      if (error.message === 'Username - Log in failed') {
         setErrorMessage('Log in failed, Please check your username.');
         setShowErrorModal(true);
-      } else if (error.message === 'Log in failed, Please try again later.') {
+      } else if (error.message === 'Log in failed') {
         setErrorMessage('Log in failed, Please try again later.');
         setShowErrorModal(true);
       } else {

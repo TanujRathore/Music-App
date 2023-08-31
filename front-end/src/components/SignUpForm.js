@@ -42,10 +42,10 @@ export default function SignupForm() {
           }, 5000); 
       } catch (error) {
         console.error('Error registering user:', error);
-        if (error.message === 'Username is already taken. Please choose another.') {
+        if (error.message === 'Username already taken') {
           setErrorMessage('Username is already taken. Please choose another.');
           setShowErrorModal(true)
-        } else if (error.message === 'Sign up failed, Please try again later.') {
+        } else if (error.message === 'Sign up failed') {
           setErrorMessage('Sign up failed. Please try again later.');
           setShowErrorModal(true)
         } else {
