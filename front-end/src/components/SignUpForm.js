@@ -13,7 +13,8 @@ export default function SignupForm() {
   const [lastName, setLastName] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [username, setUsername] = useState('');
-
+  
+  // basic update of state variables based on user's selection
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
   };
@@ -31,11 +32,14 @@ export default function SignupForm() {
   };
 
   const handleFormSubmit = async (e) => {
+    // prevent form from being submitted if it fails validation
+    // instead, validate before it's submitted
     e.preventDefault();
 
     if (selectedRole === 'staff' || selectedRole === 'family_member') {
       try {
           await registerUser(firstName, lastName, username, selectedRole);
+          // show success toast upon successful registration for a set amount of time
           setShowSuccessToast(true);
           setTimeout(() => {
             setShowSuccessToast(false);
@@ -63,30 +67,30 @@ export default function SignupForm() {
   return (
     <Card className="p-4 custom-card">
     <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
-    <Card.Body>
-      <Form onSubmit={handleFormSubmit}>
-        <div className="d-flex mb-3">
-          <Form.Group controlId="firstName" className="flex-fill me-2">
-            <Form.Label className="custom-formlabel">First Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter your first name"
-              maxLength="50"
-              value={firstName}
-              onChange={handleFirstNameChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="lastName" className="flex-fill ms-2">
-            <Form.Label className="custom-formlabel">Last Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter your last name"
-              maxLength="50"
-              value={lastName}
-              onChange={handleLastNameChange}
-            />
-          </Form.Group>
-        </div>
+      <Card.Body>
+        <Form onSubmit={handleFormSubmit}>
+          <div className="d-flex mb-3">
+            <Form.Group controlId="firstName" className="flex-fill me-2">
+              <Form.Label className="custom-formlabel">First Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your first name"
+                maxLength="50"
+                value={firstName}
+                onChange={handleFirstNameChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="lastName" className="flex-fill ms-2">
+              <Form.Label className="custom-formlabel">Last Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your last name"
+                maxLength="50"
+                value={lastName}
+                onChange={handleLastNameChange}
+              />
+            </Form.Group>
+          </div>
           <Form.Group className="mb-3" controlId="username">
             <Form.Label className="custom-formlabel">Username</Form.Label>
             <Form.Control
