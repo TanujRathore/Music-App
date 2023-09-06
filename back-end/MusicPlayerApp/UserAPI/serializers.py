@@ -10,3 +10,11 @@ class UserRoleSerializer(serializers.ModelSerializer):
                   'role',
                   'firstname',
                   'lastname')
+    def validate_username(self, value):
+        return value.lower()
+    
+    def validate_firstname(self, value):
+        return value.lower()
+    
+    def validate_lastname(self, value):
+        return value.lower()
