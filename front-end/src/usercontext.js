@@ -79,6 +79,7 @@ export const UserProvider = ({ children }) => {
       setError('Sign up failed');
     }
   };
+  
   const logoutUser = async () => {
     try {
       setUserTokens(null);

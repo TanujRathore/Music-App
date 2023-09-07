@@ -17,7 +17,6 @@ def manageAPI(request,name=0):
         # Check if the username already exists
         if UserRole.objects.filter(username=user_data['username']).exists():
             return JsonResponse("Username already exists.", safe=False, status = 400)
-
         userRoles_serializer = UserRoleSerializer(data=user_data) 
         if userRoles_serializer.is_valid():
             userRoles_serializer.save()
