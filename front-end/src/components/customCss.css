@@ -14,7 +14,7 @@
  }
 
  .custom-formlabel {
-   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+   font-family: 'Arial';
    font-size: 18px;
   
  }
@@ -24,7 +24,7 @@
  }
 
  .custom-font {
-   font-family: '', Monospace;
+   font-family: 'Arial';
    font-weight: bold;
    margin-left: 5px;
    font-size: 20px;
@@ -32,7 +32,7 @@
 }
 
  .custom-font1 {
-   font-family: 'Menlo','Monaco','Courier New', Courier, monospace;
+   font-family: 'Arial';
    font-weight: bold;
    margin-left: 2px;
    font-size: 25px;
@@ -41,7 +41,7 @@
    
 }
 .custom-font2 {
-   font-family: 'Menlo','Monaco','Courier New', Courier, monospace;
+   font-family:'Arial';
    font-weight: bold;
    margin-left: 2px;
    color:#000000;

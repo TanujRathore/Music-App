@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Pagination } from 'react-bootstrap';
 import axios from 'axios';
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
 
 const ITEMS_PER_PAGE = 12;
+const testResidents = [
+  {
+    firstname: 'John',
+    lastname: 'Doe',
+    username: 'JohnDoe',
+  },
+  
+];
+
 
 function ResidentPage() {
   const backgroundStyle = {
@@ -13,14 +23,14 @@ function ResidentPage() {
     backgroundPosition: 'center',
     minHeight: '100vh',
   };
-  const [residents, setResidents] = useState([]);
+  const [residents, setResidents] = useState(testResidents);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get(process.env.REACT_APP_BACKEND_URL)  //API？
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/residents`)  //API？
       .then(response => {
-        setResidents(response.data); // Assuming the response is an array of residents
+        setResidents(response.data); 
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -67,30 +77,35 @@ function ResidentPage() {
           </Form>
           <Row>
             {currentResidents.map(resident => (
-              <Col key={resident.id} md={4} sm={6} xs={12}>
-                <Card className="mb-4 resident-card">
-                  <Card.Body>
-                    <Card.Title className="resident-title">{resident.firstname} {resident.lastname}</Card.Title>
-                  </Card.Body>
-                </Card>
+              <Col key={resident.username} md={4} sm={6} xs={12}>
+               {<Link to={`/MusicListHome/${resident.username}`} className="text-decoration-none">
+                  <Card className="mb-4 resident-card">
+                    <Card.Body>
+                      <Card.Title className="resident-title">{resident.firstname} {resident.lastname}</Card.Title>
+                      <Card.Text>
+                        Username: {resident.username}
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Link> }
               </Col>
             ))}
           </Row>
           <div className="pagination-container">
-          {filteredResidents.length > ITEMS_PER_PAGE && (
-            <Pagination className="justify-content-center">
-              {Array.from({ length: Math.ceil(filteredResidents.length / ITEMS_PER_PAGE) }, (_, i) => (
-                <Pagination.Item
-                  key={i + 1}
-                  active={i + 1 === currentPage}
-                  onClick={() => paginate(i + 1)}
-                >
-                  {i + 1}
-                </Pagination.Item>
-              ))}
-            </Pagination>
-          )}
-        </div>
+            {filteredResidents.length > ITEMS_PER_PAGE && (
+              <Pagination className="justify-content-center">
+                {Array.from({ length: Math.ceil(filteredResidents.length / ITEMS_PER_PAGE) }, (_, i) => (
+                  <Pagination.Item
+                    key={i + 1}
+                    active={i + 1 === currentPage}
+                    onClick={() => paginate(i + 1)}
+                  >
+                    {i + 1}
+                  </Pagination.Item>
+                ))}
+              </Pagination>
+            )}
+          </div>
         </Container>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import SignupForm from '../components/SignUpForm';
+import SignupForm from '../components/SignupForm';
 import backgroundImage from '../images/bluebackground.png';
 import HomeNavbar from '../navibars/HomeNavbar'; 
 

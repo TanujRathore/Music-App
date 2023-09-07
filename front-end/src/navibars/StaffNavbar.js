@@ -1,0 +1,30 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Navbar, Container, Button } from 'react-bootstrap';
+import logoImage from '../images/MLH-Logo.jpg';
+import '../components/customCss.css';
+
+export default function LogoutNavbar() {
+  return (
+    <Navbar expand="lg" className="bg-body-tertiary">
+      <Container>
+        <Navbar.Brand>
+          <img
+            src={logoImage}
+            width="40"
+            height="40"
+            className="d-inline-block align-top"
+            alt="Music Library Logo"
+          />
+          <span className="custom-font">Music Library</span>
+        </Navbar.Brand>
+        <Link to="/staffmain" className="ml-3 custom-font">
+          Resident Gallery
+        </Link>
+        <Button as={Link} to="/" variant="outline-primary" className="ml-auto custom-button2">
+          Sign out
+        </Button>
+      </Container>
+    </Navbar>
+  );
+}

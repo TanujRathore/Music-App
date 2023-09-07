@@ -3,23 +3,37 @@ import { Card, Form, Button, Row, Col, Modal } from 'react-bootstrap';
 import UserContext from '../usercontext';
 import logoImage from '../images/MLH-Logo.jpg';
 import './customCss.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
   const { loginUser } = useContext(UserContext);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [username, setUsername] = useState('');
+  const [staffUsername, setStaffUsername] = useState('');
+  const [familyMemberUsername, setFamilyMemberUsername] = useState('');
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+  const handleStaffUsernameChange = (event) => {
+    setStaffUsername(event.target.value);
   };
+
+  const handleFamilyMemberUsernameChange = (event) => {
+    setFamilyMemberUsername(event.target.value);
+  };
+
+  const navigate = useNavigate();
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const Role = e.target.getAttribute('data-role'); 
+    const Role = e.target.getAttribute('data-role');
+    const username = Role === 'staff' ? staffUsername : familyMemberUsername; 
+
     try {
       await loginUser(username, Role);
+      if (Role === 'family_member') {
+        navigate(`/musiclisthome/${username}`);
+        return;
+      }
+
     } catch (error) {
       console.error('Error login user:', error);
       if (error.message === 'Username - Log in failed') {
@@ -34,7 +48,6 @@ export default function LoginForm() {
       }
     }
   };
-
 
   return (
     <div className="d-flex flex-column align-items-center">
@@ -54,8 +67,8 @@ export default function LoginForm() {
                     placeholder="Enter your username here"
                     maxLength="30"
                     className="custom-form-control"
-                    value={username}
-                    onChange={handleUsernameChange}
+                    value={staffUsername}
+                    onChange={handleStaffUsernameChange}
                   />
                 </Form.Group>
                 <Button as={Link} to="/staffmain" variant="primary" type="submit" className="w-100 custom-button">
@@ -77,8 +90,8 @@ export default function LoginForm() {
                     placeholder="Enter resident's username"
                     maxLength="30"
                     className="custom-form-control"
-                    value={username}
-                    onChange={handleUsernameChange}
+                    value={familyMemberUsername}
+                    onChange={handleFamilyMemberUsernameChange}
                   />
                 </Form.Group>
                 <Button variant="primary" type="submit" className="w-100 custom-button">
@@ -86,17 +99,18 @@ export default function LoginForm() {
                 </Button>
               </Form>
               <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Error</Modal.Title>
-          </Modal.Header>
-          <Modal.Body> 
-             <div className="error-modal-message">{errorMessage}</div></Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
+                <Modal.Header closeButton>
+                  <Modal.Title>Error</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="error-modal-message">{errorMessage}</div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             </Card.Body>
           </Card>
         </Col>

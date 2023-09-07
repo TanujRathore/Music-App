@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './usercontext';
 import Login from './pages/Login'; 
 import Home from './pages/Home'
-import Signup from './pages/SignUp';
-import Staffmain from './pages/staffmain'
+import Signup from './pages/Signup';
+import Staffmain from './pages/StaffMain'
+import MusicListHome from './pages/MusicListHome';
+
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} /> 
         <Route path="/signup" element={<Signup />} />
         <Route path="/staffmain" element={<Staffmain />} />
+        <Route path="/MusicListHome/:username" element={<MusicListHome />} />
         </Routes>
       </UserProvider>
     </Router>

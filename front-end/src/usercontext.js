@@ -1,7 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
-
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -20,7 +18,6 @@ export const UserProvider = ({ children }) => {
   let [loading, setLoading] = useState(true);
   let [error, setError] = useState(null);
 
-  const navigate = useNavigate();
 
   const loginUser = async (username, role) => {
     try {
@@ -43,7 +40,6 @@ export const UserProvider = ({ children }) => {
         setUserTokens(data);
         setUser(jwt_decode(data.access));
         localStorage.setItem('userTokens', JSON.stringify(data));
-        navigate('/home');
       } else if(response.status === 400){
         setError('Username - Log in failed');
       }else{
@@ -73,7 +69,7 @@ export const UserProvider = ({ children }) => {
       );
 
       if (response.status === 201) {
-        navigate('/login');
+        console.log("register")
       } else if(response.status === 400){
         setError('Username already taken');
       }else{
@@ -88,7 +84,6 @@ export const UserProvider = ({ children }) => {
       setUserTokens(null);
       setUser(null);
       localStorage.removeItem("userTokens");
-      navigate("/home");
     } catch (error) {
       setError("Log out failed, Please try again later");
     }
