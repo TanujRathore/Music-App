@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './usercontext';
 import Login from './pages/Login'; 
 import Home from './pages/Home'
-import Signup from './pages/Signup';
-import Staffmain from './pages/StaffMain'
+import Signup from './pages/SignUp';
+import Staffmain from './pages/staffmain'
 import MusicListHome from './pages/MusicListHome';
 
 

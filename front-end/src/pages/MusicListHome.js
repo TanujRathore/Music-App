@@ -13,7 +13,8 @@ import sleepPreparation from '../images/sleep-preparation.jpg';
 
 
 export default function MusicListHome() {
-  const { username } = useParams(); // 获取从路由中传递的resident用户名
+  // 获取从路由中传递的resident用户名 (parsed in from LoginForm.js)
+  const { username } = useParams(); 
 
   const backgroundStyle = {
     backgroundImage: `url(${backgroundImage})`,
@@ -32,6 +33,8 @@ export default function MusicListHome() {
                 const decoded = jwt_decode(token);
                 if (decoded && decoded.role) {
                     setUserRole(decoded.role);
+                } else {
+                    console.log("decoded token does not contain a role property");
                 }
             } catch (error) {
                 console.error('Error decoding the token:', error);
@@ -48,10 +51,9 @@ export default function MusicListHome() {
                 console.error('Error fetching resident details:', error);
             });
     }
-
     fetchUserRole();         // 获取用户角色
     fetchResidentDetails(username);  // 根据username获取resident信息
-}, [username]);  // 当username变化时，这个effect会重新运行
+  }, [username, userRole]);  // 当username变化时，这个effect会重新运行
 
 //   useEffect(() => {
 //     const fetchUserRole = () => {

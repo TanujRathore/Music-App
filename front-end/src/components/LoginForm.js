@@ -24,12 +24,12 @@ export default function LoginForm() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    const Role = e.target.getAttribute('data-role');
-    const username = Role === 'staff' ? staffUsername : familyMemberUsername; 
+    const role = e.target.getAttribute('data-role');
+    const username = role === 'staff' ? staffUsername : familyMemberUsername; 
 
     try {
-      await loginUser(username, Role);
-      if (Role === 'family_member') {
+      await loginUser(username, role);
+      if (role === 'family_member') {
         navigate(`/musiclisthome/${username}`);
         return;
       }
