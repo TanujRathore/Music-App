@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Card, Form, Button, Row, Col, Modal } from 'react-bootstrap';
 import UserContext from '../usercontext';
 import logoImage from '../images/MLH-Logo.jpg';
@@ -6,11 +6,18 @@ import './customCss.css';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
-  const { loginUser } = useContext(UserContext);
+  const { loginUser, error } = useContext(UserContext);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [staffUsername, setStaffUsername] = useState('');
   const [familyMemberUsername, setFamilyMemberUsername] = useState('');
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (error) {
+      setShowErrorModal(true);
+    }
+  }, [error]);
 
   const handleStaffUsernameChange = (event) => {
     setStaffUsername(event.target.value);
@@ -20,32 +27,15 @@ export default function LoginForm() {
     setFamilyMemberUsername(event.target.value);
   };
 
-  const navigate = useNavigate();
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     const role = e.target.getAttribute('data-role');
-    const username = role === 'staff' ? staffUsername : familyMemberUsername; 
+    const username = role === 'staff' ? staffUsername : familyMemberUsername;
 
-    try {
-      await loginUser(username, role);
-      if (role === 'family_member') {
-        navigate(`/musiclisthome/${username}`);
-        return;
-      }
+    await loginUser(username, role);
 
-    } catch (error) {
-      console.error('Error login user:', error);
-      if (error.message === 'Username - Log in failed') {
-        setErrorMessage('Log in failed, Please check your username.');
-        setShowErrorModal(true);
-      } else if (error.message === 'Log in failed') {
-        setErrorMessage('Log in failed, Please try again later.');
-        setShowErrorModal(true);
-      } else {
-        setErrorMessage('An error occurred. Please try again.');
-        setShowErrorModal(true);
-      }
+    if (role === 'family_member' && !error) {
+      navigate(`/musiclisthome/${username}`);
     }
   };
 
@@ -103,7 +93,7 @@ export default function LoginForm() {
                   <Modal.Title>Error</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <div className="error-modal-message">{errorMessage}</div>
+                  <div className="error-modal-message">{error}</div>
                 </Modal.Body>
                 <Modal.Footer>
                   <Button variant="secondary" onClick={() => setShowErrorModal(false)}>

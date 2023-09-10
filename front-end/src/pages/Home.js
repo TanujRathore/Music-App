@@ -30,11 +30,6 @@ function Home() {
                               Music Library
                             </span>
                     </Navbar.Brand>
-                    {/* <Nav className="me-auto">
-                        <Nav.Link href="#link">
-                            Gallery
-                            </Nav.Link>
-                    </Nav> */}
                     <Button as={Link} to="/signup" variant="outline-primary" className="ml-auto custom-button2">
                         Sign Up
                     </Button>

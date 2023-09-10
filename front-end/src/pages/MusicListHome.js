@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // 引入useParams
+import { useParams } from 'react-router-dom'; 
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar'; 
 import StaffNavbar from '../navibars/StaffNavbar';
@@ -27,7 +27,8 @@ export default function MusicListHome() {
 
   useEffect(() => {
     const fetchUserRole = () => {
-        const token = localStorage.getItem('userTokens');
+        const savedTokens = localStorage.getItem('userTokens') ? JSON.parse(localStorage.getItem('userTokens')) : null;
+        const token = savedTokens && savedTokens.access;  // 从对象中获取access令牌
         if (token) {
             try {
                 const decoded = jwt_decode(token);
@@ -55,6 +56,7 @@ export default function MusicListHome() {
     fetchResidentDetails(username);  // 根据username获取resident信息
   }, [username, userRole]);  // 当username变化时，这个effect会重新运行
 
+//   测试是否会显示用户姓名的代码
 //   useEffect(() => {
 //     const fetchUserRole = () => {
 //         const token = localStorage.getItem('userTokens');

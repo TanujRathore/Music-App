@@ -5,16 +5,20 @@ import UserContext from '../usercontext';
 import './customCss.css';
 
 export default function SignupForm() {
-  const { registerUser } = useContext(UserContext);
+  // Extract the registration function from context
+  const { registerUser, error } = useContext(UserContext);
+
+  // Define states for the component
   const [selectedRole, setSelectedRole] = useState('');
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [username, setUsername] = useState('');
-  
-  // basic update of state variables based on user's selection
+  const [roleNotSelected, setRoleNotSelected] = useState(false);
+  const [isInvalidRole, setIsInvalidRole] = useState(false);
+
+  // Handlers to update state variables based on user input
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
   };
@@ -31,42 +35,38 @@ export default function SignupForm() {
     setUsername(event.target.value);
   };
 
+  // Handles form submission
   const handleFormSubmit = async (e) => {
-    // prevent form from being submitted if it fails validation
-    // instead, validate before it's submitted
     e.preventDefault();
 
+    if (!selectedRole) {
+      setRoleNotSelected(true);
+      setShowErrorModal(true);
+      return;
+    }
+
     if (selectedRole === 'staff' || selectedRole === 'family_member') {
-      try {
-          await registerUser(firstName, lastName, username, selectedRole);
-          // show success toast upon successful registration for a set amount of time
-          setShowSuccessToast(true);
-          setTimeout(() => {
-            setShowSuccessToast(false);
-          }, 5000); 
-      } catch (error) {
-        console.error('Error registering user:', error);
-        if (error.message === 'Username already taken') {
-          setErrorMessage('Username is already taken. Please choose another.');
-          setShowErrorModal(true)
-        } else if (error.message === 'Sign up failed') {
-          setErrorMessage('Sign up failed. Please try again later.');
-          setShowErrorModal(true)
-        } else {
-          setErrorMessage('An error occurred. Please try again.');
-          setShowErrorModal(true)
-        }
+      const registrationSuccess = await registerUser(firstName, lastName, username, selectedRole);
+
+      if (registrationSuccess) {
+        setShowSuccessToast(true);
+        setTimeout(() => {
+          setShowSuccessToast(false);
+        }, 5000);
+      } else {
+        setShowErrorModal(true);
       }
     } else {
-      setErrorMessage('Invalid role selected.');
-      setShowErrorModal(true)
+      setIsInvalidRole(true);
+      setShowErrorModal(true);
     }
-  };
+};
+
 
 
   return (
     <Card className="p-4 custom-card">
-    <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
+      <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
       <Card.Body>
         <Form onSubmit={handleFormSubmit}>
           <div className="d-flex mb-3">
@@ -130,10 +130,18 @@ export default function SignupForm() {
           <Modal.Header closeButton>
             <Modal.Title>Error</Modal.Title>
           </Modal.Header>
-          <Modal.Body> 
-             <div className="error-modal-message">{errorMessage}</div></Modal.Body>
+          <Modal.Body>
+            <div className="error-modal-message">
+              {roleNotSelected ? "Please select the right role in the following Role selection bar." :
+                isInvalidRole ? "Invalid role selected, please try again." : error}
+            </div>
+          </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+            <Button variant="secondary" onClick={() => {
+              setShowErrorModal(false);
+              setIsInvalidRole(false);  
+              setRoleNotSelected(false);  
+            }}>
               Close
             </Button>
           </Modal.Footer>
