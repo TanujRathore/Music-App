@@ -40,7 +40,7 @@ export const UserProvider = ({ children }) => {
           setUserTokens(data);
           setUser(jwt_decode(data.access));
           localStorage.setItem('userTokens', JSON.stringify(data));
-          break;
+          return true;
 
         case STATUS_BAD_REQUEST:
           handleError('Invalid Username, please check your username!');
@@ -57,6 +57,7 @@ export const UserProvider = ({ children }) => {
     } catch (error) {
       handleError('Log in failed due to network or server issues, please try again later.');
     }
+    return false;
   };
 
   const registerUser = async (firstname, lastname, username, role) => {
@@ -92,7 +93,7 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem("userTokens");
   };
 
-  const contextData = { user, setUser, userTokens, setUserTokens, error, registerUser, loginUser, logoutUser };
+  const contextData = { user, setUser, userTokens, setUserTokens, error, registerUser, loginUser, logoutUser,setError };
 
   useEffect(() => {
     setLoading(false);

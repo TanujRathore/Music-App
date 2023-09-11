@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Card, Form, Button, Toast, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import UserContext from '../usercontext';
@@ -6,7 +6,7 @@ import './customCss.css';
 
 export default function SignupForm() {
   // Extract the registration function from context
-  const { registerUser, error } = useContext(UserContext);
+  const { registerUser, error, setError } = useContext(UserContext);
 
   // Define states for the component
   const [selectedRole, setSelectedRole] = useState('');
@@ -16,7 +16,13 @@ export default function SignupForm() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [username, setUsername] = useState('');
   const [roleNotSelected, setRoleNotSelected] = useState(false);
-  const [isInvalidRole, setIsInvalidRole] = useState(false);
+  const [emptyInput, setEmptyInput] = useState(false);
+
+  useEffect(() => {
+    if (error) {
+      setShowErrorModal(true);
+    }
+  }, [error]);
 
   // Handlers to update state variables based on user input
   const handleRoleChange = (event) => {
@@ -38,10 +44,13 @@ export default function SignupForm() {
   // Handles form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (!firstName.trim() || !lastName.trim() || !username.trim()) {
+      setEmptyInput(true);
+      return;
+    }
 
     if (!selectedRole) {
       setRoleNotSelected(true);
-      setShowErrorModal(true);
       return;
     }
 
@@ -53,17 +62,9 @@ export default function SignupForm() {
         setTimeout(() => {
           setShowSuccessToast(false);
         }, 5000);
-      } else {
-        setShowErrorModal(true);
       }
-    } else {
-      setIsInvalidRole(true);
-      setShowErrorModal(true);
     }
-};
-
-
-
+  };
   return (
     <Card className="p-4 custom-card">
       <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
@@ -114,6 +115,19 @@ export default function SignupForm() {
           </Button>
         </Form>
         <Toast
+          show={emptyInput}
+          onClose={() => setEmptyInput(false)}
+          delay={5000}
+          autohide
+          className="custom-toast">
+          <Toast.Header closeButton={true}>
+            <strong className="me-auto">Notification</strong>
+          </Toast.Header>
+          <Toast.Body>
+            Please fill in all required fields.
+          </Toast.Body>
+        </Toast>
+        <Toast
           show={showSuccessToast}
           onClose={() => setShowSuccessToast(false)}
           delay={10000}
@@ -126,22 +140,28 @@ export default function SignupForm() {
             Signup successfully! You can now <Link to="/login">Log In</Link>.
           </Toast.Body>
         </Toast>
-        <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+        <Toast
+          show={roleNotSelected}
+          onClose={() => setRoleNotSelected(false)}
+          delay={5000}
+          autohide
+          className="custom-toast">
+          <Toast.Header closeButton={true}>
+            <strong className="me-auto">Notification</strong>
+          </Toast.Header>
+          <Toast.Body>
+            Please select the right role in the following Role selection bar.
+          </Toast.Body>
+        </Toast>
+        <Modal show={showErrorModal} onHide={() => { setShowErrorModal(false); setError(null); }}>
           <Modal.Header closeButton>
             <Modal.Title>Error</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="error-modal-message">
-              {roleNotSelected ? "Please select the right role in the following Role selection bar." :
-                isInvalidRole ? "Invalid role selected, please try again." : error}
-            </div>
+            <div className="error-modal-message">{error}</div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => {
-              setShowErrorModal(false);
-              setIsInvalidRole(false);  
-              setRoleNotSelected(false);  
-            }}>
+            <Button variant="secondary" onClick={() => { setShowErrorModal(false); setError(null); }}>
               Close
             </Button>
           </Modal.Footer>
