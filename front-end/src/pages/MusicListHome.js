@@ -44,7 +44,7 @@ export default function MusicListHome() {
         }
         // 根据username获取resident信息的函数
         const fetchResidentDetails = (username) => {
-            axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/resident/${username}`)
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/manage/${username}`) //API wrong
                 .then(response => {
                     setResidentDetail(response.data);
                 })

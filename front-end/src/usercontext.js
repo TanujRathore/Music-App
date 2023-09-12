@@ -4,7 +4,7 @@ import jwt_decode from 'jwt-decode';
 const UserContext = createContext();
 
 const STATUS_BAD_REQUEST = 400; //for signup is username already taken, for login is invalid username(not found)
-const STATUS_CREATED = 201; //success status
+const STATUS_CREATED = 200; //success status
 const STATUS_FORBIDDEN = 403; //username and role don't match
 
 // get the saved token from localStorage
@@ -34,12 +34,12 @@ export const UserProvider = ({ children }) => {
       });
 
       const data = await response.json();
-
+      console.log(data)
       switch (response.status) {
         case STATUS_CREATED:
-          setUserTokens(data);
-          setUser(jwt_decode(data.access));
-          localStorage.setItem('userTokens', JSON.stringify(data));
+          // setUserTokens(data);
+          // setUser(jwt_decode(data.access));
+          // localStorage.setItem('userTokens', JSON.stringify(data));
           return true;
 
         case STATUS_BAD_REQUEST:

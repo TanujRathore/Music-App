@@ -6,14 +6,6 @@ import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
 
 const ITEMS_PER_PAGE = 12;
-const testResidents = [
-  {
-    firstname: 'John',
-    lastname: 'Doe',
-    username: 'JohnDoe',
-  },
-  
-];
 
 
 function ResidentPage() {
@@ -23,12 +15,12 @@ function ResidentPage() {
     backgroundPosition: 'center',
     minHeight: '100vh',
   };
-  const [residents, setResidents] = useState(testResidents);
+  const [residents, setResidents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/residents`)  //API？
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/manage/`)  
       .then(response => {
         setResidents(response.data); 
       })

@@ -45,9 +45,10 @@ function PlayList() {
     const toggleLove = async (index) => {
         const song = songs[index];
         try {
-            const response = await axios.post('/api/toggleLove', {
+            const response = await axios.post('/api/toggleLove', { //API wrong
                 songId: song.id,
-                userId: username
+                userId: username,
+                playlistName: playlistName
             });
             if (response.data.success) {
                 const updatedSongs = [...songs];
@@ -65,8 +66,8 @@ function PlayList() {
     const deleteSong = async (index) => {
         const song = songs[index];
         try {
-            const response = await axios.delete(`/api/deleteSong/${song.id}`, {
-                data: { userId: username }
+            const response = await axios.delete(`/api/deleteSong/${song.id}`, { //API wrong
+                data: { userId: username ,playlistName: playlistName}
             });
             if (response.data.success) {
                 const updatedSongs = [...songs];
@@ -82,7 +83,7 @@ function PlayList() {
     };
 
     useEffect(() => {
-        axios.get(`/api/playlists/${username}/${playlistName}`)
+        axios.get(`/api/playlists/${username}/${playlistName}`) //API wrong
             .then(response => {
                 if (response.data) {
                     setSongs(response.data.songs);
