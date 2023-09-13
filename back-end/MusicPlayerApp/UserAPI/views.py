@@ -100,7 +100,7 @@ def loginAPI(request, name=0):
             refresh_token = str(refresh)
 
             return JsonResponse({
-                'message': f"Welcome {user_data['username']}",
+                'message': user_data['username']',
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }, safe=False, status=201)
