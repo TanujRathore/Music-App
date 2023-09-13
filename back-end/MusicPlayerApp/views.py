@@ -108,7 +108,7 @@ def musiclistApi(request, id=0):
 
     elif request.method == 'PUT':
         musiclist_data = JSONParser().parse(request)
-        musiclist = MusicList.objects.get(musiclistId=musiclist_data['musiclistId'])
+        musiclist = MusicList.objects.get(MusicListId=musiclist_data['MusicListId'])
         musiclist_serializer = MusicListSerializer(musiclist, data=musiclist_data)
         if musiclist_serializer.is_valid():
             musiclist_serializer.save()
@@ -124,7 +124,7 @@ def musiclistApi(request, id=0):
         }, safe=False)
 
     elif request.method == 'DELETE':
-        musiclist = MusicList.objects.get(musiclistId=id)
+        musiclist = MusicList.objects.get(MusicListId=id)
         musiclist.delete()
         return JsonResponse({
             'message': "Deleted Successfully!!",
