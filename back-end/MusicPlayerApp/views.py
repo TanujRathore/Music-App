@@ -12,20 +12,40 @@ from MusicPlayerApp.serializers import MusicListSerializer,MusicSerializer
 
 from django.core.files.storage import default_storage
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from django.http import HttpResponseBadRequest
+
 @csrf_exempt
 def musicApi(request,id=0):
+    refresh = RefreshToken.for_user(request.user)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
     if request.method=='GET':
         musics = Musics.objects.all()
         music_serializer = MusicSerializer(musics, many=True) 
-        return JsonResponse (music_serializer. data, safe=False)
+        return JsonResponse ({
+            'data': music_serializer.data,
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False)
     
     elif request.method=='POST':
         musics_data=JSONParser().parse(request)
         musics_serializer = MusicSerializer(data=musics_data) 
         if musics_serializer.is_valid():
             musics_serializer.save()
-            return JsonResponse("Added Successfully!!" , safe=False)
-        return JsonResponse("Failed to Add.", safe=False)
+            return JsonResponse({
+                'message': "Added Successfully!!",
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            } , safe=False)
+        return JsonResponse({
+            'message': "Failed to Add.",
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False)
 
     elif request.method=='PUT':
         musics_data = JSONParser().parse(request)
@@ -33,51 +53,105 @@ def musicApi(request,id=0):
         musics_serializer = MusicSerializer(music, data=musics_data)
         if musics_serializer.is_valid():
             musics_serializer.save()
-            return JsonResponse("Updated Successfully!!", safe=False) 
-        return JsonResponse("Failed to Update.", safe=False) 
+            return JsonResponse({
+            'message': "Updated Successfully!!",
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False) 
+        return JsonResponse({
+            'message': "Failed to Update.",
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False) 
 
     elif request.method=='DELETE':
         music = Musics.objects.get(MusicID=id)
         music.delete()
-        return JsonResponse ("Deleted Successfully!!", safe=False)
+        return JsonResponse ({
+            'message':"Deleted Successfully!!",
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False)
     
 
 @csrf_exempt
-def musiclistApi(request,id=0):
-    if request.method=='GET':
+def musiclistApi(request, id=0):
+    # Generate tokens
+    refresh = RefreshToken.for_user(request.user)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
+    if request.method == 'GET':
         musicList = MusicList.objects.all()
-        musicLists_serializer = MusicListSerializer(musicList, many=True) 
-        return JsonResponse (musicLists_serializer. data, safe=False)
-    
-    elif request.method=='POST':
-        musiclist_data=JSONParser().parse(request)
-        musiclist_serializer = MusicListSerializer(data=musiclist_data) 
-        if musiclist_serializer.is_valid():
-            musiclist_serializer.save()
-            return JsonResponse("Added Successfully!!" , safe=False)
-        return JsonResponse("Failed to Add.", safe=False)
+        musicLists_serializer = MusicListSerializer(musicList, many=True)
+        return JsonResponse({
+            'data': musicLists_serializer.data,
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False)
 
-    elif request.method=='PUT':
+    elif request.method == 'POST':
         musiclist_data = JSONParser().parse(request)
-        musiclist=MusicList.objects.get(musiclistId=musiclist_data['musiclistId']) 
-        musiclist_serializer=MusicListSerializer(musiclist, data=musiclist_data)
+        musiclist_serializer = MusicListSerializer(data=musiclist_data)
         if musiclist_serializer.is_valid():
             musiclist_serializer.save()
-            return JsonResponse("Updated Successfully!!", safe=False) 
-        return JsonResponse("Failed to Update.", safe=False) 
+            return JsonResponse({
+                'message': "Added Successfully!!",
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, safe=False)
+        return JsonResponse({
+            'message': "Failed to Add.",
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False)
 
-    elif request.method=='DELETE':
-        musiclist=MusicList.objects.get(musiclistId=id)
+    elif request.method == 'PUT':
+        musiclist_data = JSONParser().parse(request)
+        musiclist = MusicList.objects.get(musiclistId=musiclist_data['musiclistId'])
+        musiclist_serializer = MusicListSerializer(musiclist, data=musiclist_data)
+        if musiclist_serializer.is_valid():
+            musiclist_serializer.save()
+            return JsonResponse({
+                'message': "Updated Successfully!!",
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, safe=False)
+        return JsonResponse({
+            'message': "Failed to Update.",
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False)
+
+    elif request.method == 'DELETE':
+        musiclist = MusicList.objects.get(musiclistId=id)
         musiclist.delete()
-        return JsonResponse ("Deleted Successfully!!", safe=False)
-    
+        return JsonResponse({
+            'message': "Deleted Successfully!!",
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }, safe=False)
+
 @csrf_exempt
 def SaveFile(request):
+    # Generate tokens
+    refresh = RefreshToken.for_user(request.user)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
     if request.method == 'POST':
-        file = request.FILES.get('file')  # You can name the input 'file' or something descriptive
+        file = request.FILES.get('file')
         if file:
             file_name = default_storage.save(file.name, file)
-            return JsonResponse({"file_name": file_name}, status=200)
+            return JsonResponse({
+                "file_name": file_name,
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }, status=200)
         else:
-            return JsonResponse({"error": "No file uploaded"}, status=400)
+            return JsonResponse({
+                "error": "No file uploaded",
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }, status=400)
     return HttpResponseBadRequest('Invalid request method')

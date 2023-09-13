@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'rest_framework',
     'MusicPlayerApp.apps.MusicplayerappConfig',
+    'rest_framework_simplejwt'
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
