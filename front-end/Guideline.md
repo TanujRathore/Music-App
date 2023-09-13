@@ -38,7 +38,10 @@ Below are the steps to run the front-end application locally. Make sure you have
     ```bash
     npm install axios
     ```   
-
+7. Install `react-icons` dependency:
+    ```bash
+    npm install react-icons
+    ```
 ## Run the Application
 
 Once the above steps are completed, you can run the front-end application:
