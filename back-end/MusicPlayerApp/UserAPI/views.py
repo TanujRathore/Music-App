@@ -103,7 +103,7 @@ def loginAPI(request, name=0):
                 'message': f"Welcome {user_data['username']}",
                 'access_token': access_token,
                 'refresh_token': refresh_token
-            }, safe=False)
+            }, safe=False, status=201)
         else:
             return JsonResponse({
                 'message': "User does not exist.",
