@@ -4,7 +4,7 @@ import { UserProvider } from './usercontext';
 import Login from './pages/Login'; 
 import Home from './pages/Home'
 import Signup from './pages/SignUp';
-import Staffmain from './pages/StaffMain'
+import Staffmain from './pages/StaffMain';
 import MusicListHome from './pages/MusicListHome';
 import PlaylistComponent from './pages/PlayList';
 

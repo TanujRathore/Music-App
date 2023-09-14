@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
+import UserContext from '../usercontext';
 import { useParams, Link } from 'react-router-dom';
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
 import StaffNavbar from '../navibars/StaffNavbar';
-import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 import { Card, Col, Row } from 'react-bootstrap';
 import morningMotivation from '../images/morning-motivation.png';
@@ -11,50 +11,34 @@ import dailyActivityBackground from '../images/daily-Activity-background.png';
 import afternoonRelax from '../images/afternoon-relax.png';
 import sleepPreparation from '../images/sleep-preparation.jpg';
 
-
 export default function MusicListHome() {
-    // 获取从路由中传递的resident用户名 (parsed in from LoginForm.js)
     const { username } = useParams();
-
+    const localUserRole = localStorage.getItem('userRole');
     const backgroundStyle = {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         minHeight: '100vh',
     };
-    const [userRole, setUserRole] = useState(null);
+
     const [residentDetail, setResidentDetail] = useState({});
 
     useEffect(() => {
-        const fetchUserRole = () => {
-            const savedTokens = localStorage.getItem('userTokens') ? JSON.parse(localStorage.getItem('userTokens')) : null;
-            const token = savedTokens && savedTokens.access;
-            if (token) {
-                try {
-                    const decoded = jwt_decode(token);
-                    if (decoded && decoded.role) {
-                        setUserRole(decoded.role);
-                    } else {
-                        console.log("decoded token does not contain a role property");
-                    }
-                } catch (error) {
-                    console.error('Error decoding the token:', error);
+        const fetchResidentDetails = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/user/manage/');
+                const userDetail = response.data.data.find(user => user.username === username);
+                if (userDetail) {
+                    setResidentDetail(userDetail);
+                } else {
+                    console.log("No user found with the given username");
                 }
+            } catch (error) {
+                console.error('Error fetching resident details:', error);
             }
-        }
-        // 根据username获取resident信息的函数
-        const fetchResidentDetails = (username) => {
-            axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/manage/${username}`) //API wrong
-                .then(response => {
-                    setResidentDetail(response.data);
-                })
-                .catch(error => {
-                    console.error('Error fetching resident details:', error);
-                });
-        }
-        fetchUserRole();         // 获取用户角色
-        fetchResidentDetails(username);  // 根据username获取resident信息
-    }, [username, userRole]);  // 当username变化时，这个effect会重新运行
+        };
+        fetchResidentDetails();
+    }, [username]);
 
     const playlistImages = [
         morningMotivation,
@@ -62,12 +46,18 @@ export default function MusicListHome() {
         afternoonRelax,
         sleepPreparation
     ];
+    console.log("localUserRole:", localUserRole);
+    console.log("residentDetail:", residentDetail);
+    const linkState = {
+        userRole: localUserRole,
+        residentDetail: residentDetail
+    };
 
     return (
         <div>
-            {userRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
+            {localUserRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
             <div style={{ position: 'absolute', top: '120px', left: '80px', color: 'black', fontSize: '30px', fontWeight: 'bold' }}>
-            {residentDetail && residentDetail.firstname ? `${residentDetail.firstname} ${residentDetail.lastname}` : 'Hello!'}
+                {residentDetail && residentDetail.firstname ? `Hello ! ${residentDetail.firstname} ${residentDetail.lastname}` : 'Hello!'}
             </div>
             <div style={backgroundStyle} className="d-flex justify-content-center align-items-center">
                 <Row>
@@ -76,7 +66,7 @@ export default function MusicListHome() {
                             <Link
                                 to={{
                                     pathname: `/MusicListHome/${username}/${playlistName.replace(" ", "_")}`,
-                                    state: { userRole: userRole, residentDetail: residentDetail }
+                                    state: linkState
                                 }}
                                 style={{ textDecoration: 'none', color: 'inherit' }}
                             >
@@ -94,4 +84,3 @@ export default function MusicListHome() {
         </div>
     );
 }
-

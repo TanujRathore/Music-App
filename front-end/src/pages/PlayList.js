@@ -18,15 +18,31 @@ function PlayList() {
     const { playlistName, username } = useParams();
     const [songs, setSongs] = useState([]);
     const [error, setError] = useState(false);
-    const location = useLocation();
-    const userRole = location.state?.userRole;
-    const residentDetail = location.state?.residentDetail;
+    const localUserRole = localStorage.getItem('userRole');
     const [currentPage, setCurrentPage] = useState(1);
     const songsPerPage = 6;
     const totalPages = Math.ceil(songs.length / songsPerPage);
     const indexOfLastSong = currentPage * songsPerPage;
     const indexOfFirstSong = indexOfLastSong - songsPerPage;
     const currentSongs = songs.slice(indexOfFirstSong, indexOfLastSong);
+    const [residentDetail, setResidentDetail] = useState({});
+
+    useEffect(() => {
+        const fetchResidentDetails = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/user/manage/');
+                const userDetail = response.data.data.find(user => user.username === username);
+                if (userDetail) {
+                    setResidentDetail(userDetail);
+                } else {
+                    console.log("No user found with the given username");
+                }
+            } catch (error) {
+                console.error('Error fetching resident details:', error);
+            }
+        };
+        fetchResidentDetails();
+    }, [username]);
 
     const nextPage = () => {
         if (currentPage < totalPages) {
@@ -109,12 +125,12 @@ function PlayList() {
 
     return (
         <div style={backgroundStyle}>
-            {userRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
+            {localUserRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
 
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
             <div className="d-flex justify-content-center align-items-center" style={{ fontSize: '30px', fontWeight: 'bold', marginBottom: '20px' }}>
-                {residentDetail && residentDetail.firstname ? `${residentDetail.firstname} ${residentDetail.lastname}` : 'Hello!'}
+                {residentDetail && residentDetail.firstname ? `Hello ! ${residentDetail.firstname} ${residentDetail.lastname}` : 'Hello!'}
             </div>
             <div className="d-flex justify-content-center align-items-center" style={{ marginBottom: '20px' }}>
                 <h3>Now playing: {playlistName.replace("_", " ")}</h3>

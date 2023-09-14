@@ -3,11 +3,10 @@ import jwt_decode from 'jwt-decode';
 
 const UserContext = createContext();
 
-const STATUS_BAD_REQUEST = 400; //for signup is username already taken, for login is invalid username(not found)
-const STATUS_CREATED = 201; //success status
-const STATUS_FORBIDDEN = 403; //username and role don't match
+const STATUS_BAD_REQUEST = 400;
+const STATUS_CREATED = 201;
+const STATUS_FORBIDDEN = 403;
 
-// get the saved token from localStorage
 const getSavedTokens = () => {
   const savedTokens = localStorage.getItem('userTokens');
   return savedTokens ? JSON.parse(savedTokens) : null;
@@ -16,11 +15,20 @@ const getSavedTokens = () => {
 export const UserProvider = ({ children }) => {
   const initialTokens = getSavedTokens();
 
+  let decodedUser = null;
+  if (initialTokens && typeof initialTokens.access === 'string' && initialTokens.access.split('.').length === 3) {
+    try {
+      decodedUser = jwt_decode(initialTokens.access);
+    } catch (err) {
+      console.error('Failed to decode the token', err);
+    }
+  }
+
+  let [user, setUser] = useState(decodedUser);
   let [userTokens, setUserTokens] = useState(initialTokens);
-  let [user, setUser] = useState(initialTokens ? jwt_decode(initialTokens.access) : null);
   let [loading, setLoading] = useState(true);
   let [error, setError] = useState(null);
-
+  const [userRole, setUserRole] = useState({});
   const handleError = (errorMessage) => {
     setError(errorMessage);
   };
@@ -34,12 +42,22 @@ export const UserProvider = ({ children }) => {
       });
 
       const data = await response.json();
-      console.log(data)
+      console.log(data.access_token)
+
       switch (response.status) {
         case STATUS_CREATED:
-          // setUserTokens(data);
-          // setUser(jwt_decode(data.access));
-          // localStorage.setItem('userTokens', JSON.stringify(data));
+          localStorage.setItem('userTokens', JSON.stringify({
+            access_token: data.access_token,
+            refresh_token: data.refresh_token,
+          }));
+        setUser({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        });
+        setUserTokens({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+        });
           return true;
 
         case STATUS_BAD_REQUEST:
@@ -91,6 +109,7 @@ export const UserProvider = ({ children }) => {
     setUserTokens(null);
     setUser(null);
     localStorage.removeItem("userTokens");
+    localStorage.removeItem('userRole');
   };
 
   const contextData = { user, setUser, userTokens, setUserTokens, error, registerUser, loginUser, logoutUser,setError };
@@ -100,7 +119,7 @@ export const UserProvider = ({ children }) => {
   }, [userTokens]);
 
   return (
-    <UserContext.Provider value={contextData}>
+    <UserContext.Provider value={{ user, setUser, userTokens, setUserTokens, error, registerUser, loginUser, logoutUser, setError,userRole,setUserRole }}>
       {loading ? null : children}
     </UserContext.Provider>
   );
