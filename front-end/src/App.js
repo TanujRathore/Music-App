@@ -7,6 +7,8 @@ import Signup from './pages/SignUp';
 import Staffmain from './pages/StaffMain';
 import MusicListHome from './pages/MusicListHome';
 import PlaylistComponent from './pages/PlayList';
+import PublicMusicLibrary from './pages/PublicMusicLibrary';
+
 
 
 function App() {
@@ -20,6 +22,7 @@ function App() {
         <Route path="/staffmain" element={<Staffmain />} />
         <Route path="/MusicListHome/:username" element={<MusicListHome />} />
         <Route path="/MusicListHome/:username/:playlistName" element={<PlaylistComponent/>} />
+        <Route path="/PublicMusicLibrary" element={<PublicMusicLibrary />} />
         </Routes>
       </UserProvider>
     </Router>

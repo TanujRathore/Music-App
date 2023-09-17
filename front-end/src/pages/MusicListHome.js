@@ -1,5 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
-import UserContext from '../usercontext';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
@@ -46,13 +45,6 @@ export default function MusicListHome() {
         afternoonRelax,
         sleepPreparation
     ];
-    console.log("localUserRole:", localUserRole);
-    console.log("residentDetail:", residentDetail);
-    const linkState = {
-        userRole: localUserRole,
-        residentDetail: residentDetail
-    };
-
     return (
         <div>
             {localUserRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
@@ -66,7 +58,6 @@ export default function MusicListHome() {
                             <Link
                                 to={{
                                     pathname: `/MusicListHome/${username}/${playlistName.replace(" ", "_")}`,
-                                    state: linkState
                                 }}
                                 style={{ textDecoration: 'none', color: 'inherit' }}
                             >

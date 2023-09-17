@@ -70,7 +70,7 @@ export default function SignupForm() {
       <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
       <Card.Body>
         <Form onSubmit={handleFormSubmit}>
-          <div className="d-flex mb-3">
+          <div className="d-flex mb-1">
             <Form.Group controlId="firstName" className="flex-fill me-2">
               <Form.Label className="custom-formlabel">First Name</Form.Label>
               <Form.Control
@@ -92,6 +92,7 @@ export default function SignupForm() {
               />
             </Form.Group>
           </div>
+          <p className="mt-0 mb-0 text-muted fs-6">if you are the family member, please enter the resident's name.</p>
           <Form.Group className="mb-3" controlId="username">
             <Form.Label className="custom-formlabel">Username</Form.Label>
             <Form.Control
