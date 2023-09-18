@@ -94,16 +94,26 @@ def loginAPI(request, name=0):
         
         # Check if the username exists
         if UserRole.objects.filter(username=user_data['username']).exists():
-            # Generate tokens
-            refresh = RefreshToken.for_user(request.user)
-            access_token = str(refresh.access_token)
-            refresh_token = str(refresh)
+            user = UserRole.objects.get(username=user_data['username'])
+            
+            # Check if the role matches
+            if user.role == user_data.get('role', None):
+                # Generate tokens
+                refresh = RefreshToken.for_user(request.user)
+                access_token = str(refresh.access_token)
+                refresh_token = str(refresh)
 
-            return JsonResponse({
-                'message': user_data['username'],
-                'access_token': access_token,
-                'refresh_token': refresh_token
-            }, safe=False, status=201)
+                return JsonResponse({
+                    'message': user_data['username'],
+                    'access_token': access_token,
+                    'refresh_token': refresh_token
+                }, safe=False, status=201)
+            else:
+                return JsonResponse({
+                    'message': "Username and role do not match.",
+                    'access_token': None,
+                    'refresh_token': None
+                }, safe=False, status=403)
         else:
             return JsonResponse({
                 'message': "User does not exist.",
