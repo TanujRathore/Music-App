@@ -79,7 +79,7 @@ export default function LoginForm() {
             <Card.Body>
               <Form onSubmit={handleFormSubmit} data-role="staff">
                 <Form.Group className="mb-3" controlId="username">
-                  <Form.Label className="text-center custom-formlabel">Staff Name</Form.Label>
+                  <Form.Label className="text-center custom-formlabel">Staff Username</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter your username here"
@@ -102,7 +102,7 @@ export default function LoginForm() {
             <Card.Body>
               <Form onSubmit={handleFormSubmit} data-role="family_member">
                 <Form.Group className="mb-3" controlId="username">
-                  <Form.Label className="text-center custom-formlabel">Resident Name</Form.Label>
+                  <Form.Label className="text-center custom-formlabel">Resident Username</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter resident's username"
