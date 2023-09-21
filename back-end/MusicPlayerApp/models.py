@@ -18,6 +18,6 @@ class MusicList(models.Model):
     musicListId = models.AutoField(primary_key=True)
     musicListName = models.CharField(max_length=100, default='favourite')
     musicListProfilePic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
-    userBelongTo = models.IntegerField()
+    userBelongTo = models.CharField(max_length=100)
     musicIn = models.ManyToManyField(Musics)
     
