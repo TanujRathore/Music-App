@@ -4,12 +4,9 @@ from MusicPlayerApp.models import MusicList, Musics
 class MusicListSerializer(serializers.ModelSerializer):
     class Meta:
         model = MusicList
-        fields = ('MusicListId',
-                'MusicListName',
-                'MusicListProfilePic')
+        fields = '__all__'
         
 class MusicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Musics
-        fields = ('MusicID',
-                'MusicName')
+        fields = '__all__'
