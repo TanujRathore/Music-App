@@ -64,7 +64,7 @@ export default function LoginForm() {
       <div className="custom-toast">
         <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide>
           <Toast.Header>
-            <strong className="mr-auto">Notification</strong>
+            <strong className="me-auto">Notification</strong>
           </Toast.Header>
           <Toast.Body>{toastMessage}</Toast.Body>
         </Toast>
