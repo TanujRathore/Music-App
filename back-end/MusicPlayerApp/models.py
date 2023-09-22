@@ -5,7 +5,7 @@ from django.db import models
 class Musics(models.Model):
     musicID = models.AutoField(primary_key=True)
     musicName = models.CharField(max_length=100)
-    musicUrl = models.CharField(max_length=100)
+    musicUrl = models.CharField(max_length=100, null=True, blank=True)
     musicType = models.CharField(max_length=100, null=True, blank=True)
     
 class UserRole(models.Model):
