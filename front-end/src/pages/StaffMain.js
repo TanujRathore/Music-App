@@ -20,15 +20,15 @@ function ResidentPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/manage/`)  
+    axios.get('http://127.0.0.1:8000/user/manage/')
       .then(response => {
-        setResidents(response.data); 
+        const familyMembers = response.data.data.filter(user => user.role === "family_member");
+        setResidents(familyMembers);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
       });
-  }, []);
-
+}, [])
   const handleSearch = (e) => {
     e.preventDefault();
     setCurrentPage(1);

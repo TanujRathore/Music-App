@@ -6,12 +6,13 @@ import './customCss.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginForm() {
-  const { loginUser, error,setError } = useContext(UserContext);
+  const { loginUser, error, setError, setUserRole } = useContext(UserContext);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [staffUsername, setStaffUsername] = useState('');
   const [familyMemberUsername, setFamilyMemberUsername] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+
 
 
   const navigate = useNavigate();
@@ -41,11 +42,15 @@ export default function LoginForm() {
     }
     try {
       const loginSuccess = await loginUser(username, role);
-      if (role === 'family_member' && loginSuccess &&!error) {
-        navigate(`/musiclisthome/${username}`);
-      } else if (role === 'staff' && loginSuccess && !error) {
-        navigate('/staffmain');
-      } else if (!loginSuccess) {
+      if (loginSuccess && !error) {
+        setUserRole(role);  
+        localStorage.setItem('userRole', role);
+        if (role === 'family_member') {
+          navigate(`/musiclisthome/${username}`);
+        } else if (role === 'staff') {
+          navigate('/staffmain');
+        } 
+      } else {
         console.error("Login failed!");
       }
     } catch (error) {
@@ -59,7 +64,7 @@ export default function LoginForm() {
       <div className="custom-toast">
         <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide>
           <Toast.Header>
-            <strong className="mr-auto">Notification</strong>
+            <strong className="me-auto">Notification</strong>
           </Toast.Header>
           <Toast.Body>{toastMessage}</Toast.Body>
         </Toast>
@@ -74,7 +79,7 @@ export default function LoginForm() {
             <Card.Body>
               <Form onSubmit={handleFormSubmit} data-role="staff">
                 <Form.Group className="mb-3" controlId="username">
-                  <Form.Label className="text-center custom-formlabel">Staff Name</Form.Label>
+                  <Form.Label className="text-center custom-formlabel">Staff Username</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter your username here"
@@ -97,7 +102,7 @@ export default function LoginForm() {
             <Card.Body>
               <Form onSubmit={handleFormSubmit} data-role="family_member">
                 <Form.Group className="mb-3" controlId="username">
-                  <Form.Label className="text-center custom-formlabel">Resident Name</Form.Label>
+                  <Form.Label className="text-center custom-formlabel">Resident Username</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter resident's username"
