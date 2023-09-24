@@ -40,7 +40,7 @@ jobs:
         chmod +x pa_autoconfigure_django.py
 
         # Deploy using the script
-        ./pa_autoconfigure_django.py --nuke ${{ s4lent3 }}.pythonanywhere.com --branch=Sprint2
+        ./pa_autoconfigure_django.py --nuke ${{ 's4lent3' }}.pythonanywhere.com --branch=Sprint2
       env:
-        API_TOKEN: ${{ aa4b204afc1ad7f6bac389ce6a6e8690b77f119e }}
+        API_TOKEN: ${{ 'aa4b204afc1ad7f6bac389ce6a6e8690b77f119e' }}
 
