@@ -1,6 +1,6 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { Link } from 'react-router-dom';
-import { Navbar, Container, Button } from 'react-bootstrap';
+import { Navbar, Container, Button,Toast } from 'react-bootstrap';
 import Image from 'react-bootstrap/Image';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -9,6 +9,7 @@ import staffmainIcon from '../images/staffmain.png';
 import '../components/customCss.css';
 
 export default function StaffNavbar() {
+  const [show, setShow] = useState(false);
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
@@ -32,6 +33,19 @@ export default function StaffNavbar() {
         <Button as={Link} to="/" variant="outline-primary" className="ml-auto custom-button2">
           Sign out
         </Button>
+        <Toast show={show} onClose={() => setShow(false)} className="custom-toast">
+          <Toast.Header>
+            <strong className="me-auto"></strong>
+          </Toast.Header>
+          <Toast.Body>Are you sure you want to sign out?</Toast.Body>
+          <div className="d-flex justify-content-around mt-2">
+            <Button as={Link} to="/" style={{ backgroundColor: '#7dc5eb', borderColor: '#7dc5eb' }} variant="info" className="mr-2">
+              Yes
+            </Button>
+            <Button variant="info" style={{ backgroundColor: '#7dc5eb', borderColor: '#7dc5eb' }} onClick={() => setShow(false)}>No</Button>
+          </div>
+          <div className="mt-2"></div>
+        </Toast>
       </Container>
     </Navbar>
   );

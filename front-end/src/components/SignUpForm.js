@@ -17,6 +17,8 @@ export default function SignupForm() {
   const [username, setUsername] = useState('');
   const [roleNotSelected, setRoleNotSelected] = useState(false);
   const [emptyInput, setEmptyInput] = useState(false);
+  const [isUsernameNotLowercase, setIsUsernameNotLowercase] = useState(false);
+
 
   useEffect(() => {
     if (error) {
@@ -44,6 +46,10 @@ export default function SignupForm() {
   // Handles form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (username !== username.toLowerCase()) {
+      setIsUsernameNotLowercase(true);
+      return;
+    }
     if (!firstName.trim() || !lastName.trim() || !username.trim()) {
       setEmptyInput(true);
       return;
@@ -97,7 +103,7 @@ export default function SignupForm() {
             <Form.Label className="custom-formlabel">Username</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter username"
+              placeholder="Enter username in lower case"
               maxLength="30"
               value={username}
               onChange={handleUsernameChange}
@@ -126,6 +132,20 @@ export default function SignupForm() {
           </Toast.Header>
           <Toast.Body>
             Please fill in all required fields.
+          </Toast.Body>
+        </Toast>
+        <Toast
+          show={isUsernameNotLowercase}
+          onClose={() => setIsUsernameNotLowercase(false)}
+          delay={5000}
+          autohide
+          className="custom-toast"
+        >
+          <Toast.Header closeButton={true}>
+            <strong className="me-auto">Notification</strong>
+          </Toast.Header>
+          <Toast.Body>
+            Username must be in lowercase.
           </Toast.Body>
         </Toast>
         <Toast

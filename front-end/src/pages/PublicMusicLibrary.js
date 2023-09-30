@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate,Link } from 'react-router-dom';
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
 import StaffNavbar from '../navibars/StaffNavbar';
-import {Button, Modal} from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import '../components/customCss.css';
+import backButtonIcon from '../images/back-button-icon.png';
 
 function PublicMusicLibrary() {
     const backgroundStyle = {
@@ -14,39 +15,51 @@ function PublicMusicLibrary() {
         backgroundPosition: 'center',
         minHeight: '100vh',
     };
+
+    // Existing states
     const [songs, setSongs] = useState([]);
     const [selectedSongs, setSelectedSongs] = useState([]);
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
-    const songsPerPage = 6;
-    const totalPages = Math.ceil(songs.length / songsPerPage);
-    const indexOfLastSong = currentPage * songsPerPage;
-    const indexOfFirstSong = indexOfLastSong - songsPerPage;
-    const currentSongs = songs.slice(indexOfFirstSong, indexOfLastSong);
     const navigate = useNavigate();
     const { username } = useParams();
     const localUserRole = localStorage.getItem('userRole');
     const [showErrorModal, setShowErrorModal] = useState(false);
     const playlistName = localStorage.getItem('playlistName');
     console.log(playlistName);
+    console.log(username);
+    const [searchTerm, setSearchTerm] = useState('');
 
+    // New state for the confirmation modal
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
+    const songsPerPage = 6;
+    const indexOfLastSong = currentPage * songsPerPage;
+    const indexOfFirstSong = indexOfLastSong - songsPerPage;
+
+    const filteredSongs = songs.filter(song =>
+        song.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredSongs.length / songsPerPage);
+    const currentSongs = filteredSongs.slice(indexOfFirstSong, indexOfLastSong);
 
     const nextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
+        if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
     };
 
     const prevPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+        if (currentPage > 1) setCurrentPage(prev => prev - 1);
     };
-    ;
-    
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setCurrentPage(1);
+    };
+
     useEffect(() => {
-        axios.get(`/api/playlists`) //wrong API
+        axios.get(`/api/playlists`) // Replace with correct API
             .then(response => {
                 if (response.data) {
                     setSongs(response.data.songs);
@@ -58,9 +71,8 @@ function PublicMusicLibrary() {
                 console.error('Failed to fetch songs from the backend', error);
                 setError(true);
             });
-            return () => {
-                localStorage.removeItem('playlistName');
-            };
+        return () => {
+        };
     }, [playlistName, username]);
 
     const toggleSongSelection = (songId) => {
@@ -72,8 +84,11 @@ function PublicMusicLibrary() {
     };
 
     const addToPlaylist = async () => {
+        // Close the confirmation modal regardless of success/failure
+        setShowConfirmationModal(false);
+
         try {
-            const response = await axios.post('/api/addToPlaylist', { //wrong API
+            const response = await axios.post('/api/addToPlaylist', { // Replace with correct API
                 playlistName,
                 songIds: selectedSongs
             });
@@ -81,7 +96,7 @@ function PublicMusicLibrary() {
             if (response.data.success) {
                 alert('Songs added to playlist successfully!');
                 setSelectedSongs([]);
-                navigate(`/playlists/${username}/${playlistName}`);
+                navigate(`/MusicListHome/${username}/${playlistName}`);
             } else {
                 setErrorMessage('Failed to add songs to playlist.');
                 setShowErrorModal(true);
@@ -92,6 +107,7 @@ function PublicMusicLibrary() {
             setShowErrorModal(true);
         }
     };
+
     const buttonStyle = {
         padding: '10px 20px',
         margin: '0 10px',
@@ -101,60 +117,51 @@ function PublicMusicLibrary() {
         borderRadius: '5px',
         cursor: 'pointer'
     };
+
     const positioningStyle = {
         position: 'absolute',
-        top: '7rem',
+        top: '6rem',
         right: '7vw',
         fontSize: '1.25rem',
     };
 
-
-
     return (
         <div style={backgroundStyle}>
             {localUserRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
-              
+
             <div className="d-flex flex-column justify-content-center align-items-center" style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '10px', marginTop: '15px' }}>
                 <span className="d-flex align-items-center" style={{ marginRight: '8px' }}>
                     This is Public Music Library.
                 </span>
             </div>
+            <Link to={`/MusicListHome/${username}/${playlistName}`} style={{ position: 'absolute', top: '80px', left: '20px', textDecoration: 'none' }}>
+                <img src={backButtonIcon} alt="Back to Music List Home" style={{ width: '30px', height: '30px' }} />
+            </Link>
+            <Form onSubmit={handleSearch} className="mb-3" style={{ maxWidth: '1100px', margin: '0 auto' }}>
+                <Form.Group controlId="searchTerm">
+                    <Form.Label>Please enter the song name to search</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Search song name"
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                    />
+                </Form.Group>
+            </Form>
             {error && (
-                <div className="d-flex justify-content-center align-items-center" style={{ color: 'red', marginBottom: '20px' }}>
+                <div className="d-flex justify-content-center align-items-center" style={{ color: 'red', marginBottom: '10px' }}>
                     <h4>Loading public music library unsuccessfully, please try again later.</h4>
                 </div>
             )}
-            <button onClick={addToPlaylist} className="custom-button2" style={positioningStyle}>Add Selected to Playlist</button>
-            <div className="d-flex justify-content-center align-items-center flex-column">
-                {currentSongs.map((song, idx) => {
-                    const actualIndex = indexOfFirstSong + idx;
-                    return (
-                        <div key={actualIndex}
-                            style={{
-                                borderRadius: '10px',
-                                backgroundColor: 'white',
-                                padding: '20px',
-                                width: '1200px',
-                                margin: '10px 0',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '50px' }}>{song.name}</span>
-                                <span>{song.artist}</span>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedSongs.includes(song.id)}
-                                    onChange={() => toggleSongSelection(song.id)}
-                                />
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+            {/* Render Songs */}
+            {currentSongs.map(song => (
+                <div key={song.id} className="songItem">
+                    <input type="checkbox" checked={selectedSongs.includes(song.id)} onChange={() => toggleSongSelection(song.id)} />
+                    <span>{song.name}</span>
+                </div>
+            ))}
 
-
+            {/* Pagination Logic */}
             <div className="pagination-controls" style={{ position: 'absolute', bottom: '50px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <button
                     onClick={prevPage}
@@ -170,19 +177,47 @@ function PublicMusicLibrary() {
                     Next
                 </button>
             </div>
-            <Modal show={showErrorModal} onHide={() => {setShowErrorModal(false); setErrorMessage(null);}}>
+
+            <button onClick={() => setShowConfirmationModal(true)} className="custom-button2" style={positioningStyle}>Add Selected to Playlist</button>
+
+            {/* Confirmation Modal */}
+            <Modal show={showConfirmationModal} onHide={() => setShowConfirmationModal(false)}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Error</Modal.Title>
+                    <Modal.Title>Confirmation</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <div className="error-modal-message">{errorMessage}</div>
+                    <div>Following songs will be added to the playlist:</div>
+                    <ul>
+                        {selectedSongs.map(songId => {
+                            const song = songs.find(s => s.id === songId);
+                            return <li key={songId}>{song?.name}</li>
+                        })}
+                    </ul>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="secondary" onClick={() => {setShowErrorModal(false); setErrorMessage(null);}}>
-                    Close
-                  </Button>
+                    <Button variant="secondary" onClick={() => setShowConfirmationModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" style={{ backgroundColor: '#2c82cd', borderColor: '#2c82cd' }}onClick={addToPlaylist}>
+                        Confirm
+                    </Button>
                 </Modal.Footer>
-              </Modal>
+            </Modal>
+
+            {/* Error Modal */}
+            <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Error</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {errorMessage}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

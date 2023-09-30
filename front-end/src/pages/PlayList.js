@@ -134,6 +134,7 @@ function PlayList() {
         fontSize: '1.25rem',
     };
     localStorage.setItem('playlistName', playlistName);
+    console.log(playlistName);
 
     return (
         <div style={backgroundStyle}>
@@ -165,10 +166,7 @@ function PlayList() {
                 </div>
             )}
             <Link
-                to={{
-                    pathname: "/PublicMusicLibrary",
-                    state: { fromPlaylist: true, username: username, playlistName: playlistName }
-                }}
+                to={ `/PublicMusicLibrary/${username}`}
                 className="custom-button2"
                 style={positioningStyle}>
                 Add Music to the list
