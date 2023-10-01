@@ -6,7 +6,7 @@ from rest_framework.parsers import JSONParser
 
 from django.http.response import JsonResponse
 
-from MusicPlayerApp.models import MusicList,Musics
+from MusicPlayerApp.models import MusicList,Musics,UserRole
 
 from MusicPlayerApp.serializers import MusicListSerializer,MusicSerializer
 
@@ -75,17 +75,28 @@ def musicApi(request,id=0):
     
 
 @csrf_exempt
-def musiclistApi(request, id=0):
+def musiclistApi(request, username):
     # Generate tokens
     refresh = RefreshToken.for_user(request.user)
     access_token = str(refresh.access_token)
     refresh_token = str(refresh)
 
     if request.method == 'GET':
-        musicList = MusicList.objects.all()
-        musicLists_serializer = MusicListSerializer(musicList, many=True)
+        try:
+            user = UserRole.objects.get(username=username)
+        except UserRole.DoesNotExist:
+            return JsonResponse({
+                'message': 'User not found.',
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, status=404)
+
+        # get Music List
+        musiclists = MusicList.objects.filter(userBelongTo=username)[:5]
+        musiclist_serializer = MusicListSerializer(musiclists, many=True)
+        
         return JsonResponse({
-            'data': musicLists_serializer.data,
+            'data': musiclist_serializer.data,
             'access_token': access_token,
             'refresh_token': refresh_token
         }, safe=False)

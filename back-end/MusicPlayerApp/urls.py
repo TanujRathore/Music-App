@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
+    path('musiclist/<str:username>/', views.musiclistApi, name='musiclistApi'),
     path('musiclist/', views.musiclistApi),
     re_path(r'^musiclist/(?P<id>[0-9]*)$', views.musiclistApi),
     path('upload/', views.SaveFile),
