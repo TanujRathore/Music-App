@@ -1,8 +1,10 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import SignupForm from '../components/SignUpForm';
 import backgroundImage from '../images/bluebackground.png';
 import HomeNavbar from '../navibars/HomeNavbar'; 
+import backButtonIcon from '../images/back-button-icon.png';
 
 function Signup() {
   const backgroundStyle = {
@@ -23,6 +25,9 @@ function Signup() {
           </Col>
         </Row>
       </Container>
+      <Link to="/login" style={{ position: 'absolute', top: '80px', left: '20px', textDecoration: 'none' }}>
+                <img src={backButtonIcon} alt="Back to Music List Home" style={{ width: '30px', height: '30px' }} />
+            </Link>
     </div>
     </div>
   );

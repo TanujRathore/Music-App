@@ -59,7 +59,7 @@ function PublicMusicLibrary() {
     };
 
     useEffect(() => {
-        axios.get(`/api/playlists`) // Replace with correct API
+        axios.get(`/api/playlists`) // API to fetch all songs in the public
             .then(response => {
                 if (response.data) {
                     setSongs(response.data.songs);
@@ -86,27 +86,46 @@ function PublicMusicLibrary() {
     const addToPlaylist = async () => {
         // Close the confirmation modal regardless of success/failure
         setShowConfirmationModal(false);
-
+    
         try {
-            const response = await axios.post('/api/addToPlaylist', { // Replace with correct API
-                playlistName,
-                songIds: selectedSongs
+            // First, get the MusicListID for the user's playlist
+            const musicListResponse = await axios.get('http://127.0.0.1:8000/musiclist/', {
+                params: {
+                    username
+                }
             });
-
-            if (response.data.success) {
-                alert('Songs added to playlist successfully!');
-                setSelectedSongs([]);
-                navigate(`/MusicListHome/${username}/${playlistName}`);
-            } else {
-                setErrorMessage('Failed to add songs to playlist.');
-                setShowErrorModal(true);
+    
+            const userPlaylist = musicListResponse.data.find(list => list.musicListName === playlistName);
+    
+            if (!userPlaylist) {
+                throw new Error('User playlist not found');
             }
+    
+            const musicListID = userPlaylist.musicListId;
+    
+            // Once we have the MusicListID, post each song to the playlist
+            for (let songId of selectedSongs) {
+                const response = await axios.post('http://127.0.0.1:8000/musiclist/', {
+                    MusicID: songId,
+                    MusicListID: musicListID
+                });
+    
+                if (!response.data || response.data.status !== 201) {
+                    throw new Error('Failed to add a song to playlist');
+                }
+            }
+    
+            alert('Songs added to playlist successfully!');
+            setSelectedSongs([]);
+            navigate(`/MusicListHome/${username}/${playlistName}`);
+    
         } catch (error) {
             console.error('Failed to add songs to playlist:', error);
             setErrorMessage('There was an error adding songs to the playlist.');
             setShowErrorModal(true);
         }
     };
+    
 
     const buttonStyle = {
         padding: '10px 20px',

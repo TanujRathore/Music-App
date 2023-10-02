@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import {Button, Modal} from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
 import StaffNavbar from '../navibars/StaffNavbar';
@@ -17,6 +17,7 @@ function PlayList() {
         backgroundPosition: 'center',
         minHeight: '100vh',
     };
+
     const { playlistName, username } = useParams();
     const [songs, setSongs] = useState([]);
     const [error, setError] = useState(false);
@@ -30,6 +31,10 @@ function PlayList() {
     const [residentDetail, setResidentDetail] = useState({});
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [favouriteListId, setFavouriteListId] = useState(null);
+    const [favouriteSongs, setFavouriteSongs] = useState([]);
+    const isLoved = song => favouriteSongs.some(favSong => favSong.id === song.id);
+
 
 
     useEffect(() => {
@@ -49,6 +54,27 @@ function PlayList() {
         fetchResidentDetails();
     }, [username]);
 
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/musiclist/`)
+            .then(response => {
+                const userPlaylists = response.data.data.filter(list => list.userBelongTo === username);
+                const targetPlaylist = userPlaylists.find(list => list.musicListName === playlistName);
+                if (targetPlaylist) {
+                    setSongs(targetPlaylist.musicIn);
+                } else {
+                    setError(true);
+                }
+                const favouriteList = response.data.data.find(list => list.musicListName === "Favourite");
+                if (favouriteList) {
+                    setFavouriteSongs(favouriteList.musicIn);
+                }
+            })
+            .catch(error => {
+                console.error('Failed to fetch songs from the backend', error);
+                setError(true);
+            });
+    }, [playlistName, username]);
+
     const nextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
@@ -60,36 +86,65 @@ function PlayList() {
             setCurrentPage(currentPage - 1);
         }
     };
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/musiclist/')
+            .then(response => {
+                const favouriteList = response.data.data.find(list => list.musicListName === "Favourite");
+                if (favouriteList) {
+                    setFavouriteListId(favouriteList.musicListId);
+                }
+            })
+            .catch(error => {
+                console.error('Failed to fetch playlists', error);
+            });
+    }, []);
 
     const toggleLove = async (index) => {
         const song = songs[index];
-        try {
-            const response = await axios.post('/api/toggleLove', { //API wrong
-                songId: song.id,
-                userId: username,
-                playlistName: playlistName
-            });
-            if (response.data.success) {
-                const updatedSongs = [...songs];
-                updatedSongs[index].loved = !updatedSongs[index].loved;
-                setSongs(updatedSongs);
-            } else {
-                console.error('Failed to toggle love status');
+        const action = song.loved ? "DELETE" : "POST";
+
+        if (favouriteListId) {
+            try {
+                const response = await axios({
+                    method: action,
+                    url: 'http://127.0.0.1:8000/musiclist/',
+                    data: {
+                        MusicID: song.id,
+                        MusicListID: favouriteListId
+                    }
+                });
+
+                if (response.status === 201) {
+                    const updatedSongs = [...songs];
+                    updatedSongs[index].loved = !updatedSongs[index].loved;
+                    setSongs(updatedSongs);
+                } else {
+                    console.error('Failed to toggle love status');
+                }
+            } catch (error) {
+                console.error('There was an error sending the request', error);
+                setErrorMessage("Loved song failed, please try again later.");
+                setShowErrorModal(true);
             }
-        } catch (error) {
-            console.error('There was an error sending the request', error);
-            setErrorMessage("Loved song failed, please try again later.");
-            showErrorModal(true);
+        } else {
+            console.error('Favourite list ID not found');
         }
     };
 
     const deleteSong = async (index) => {
         const song = songs[index];
+
         try {
-            const response = await axios.delete(`/api/deleteSong/${song.id}`, { //API wrong
-                data: { userId: username, playlistName: playlistName }
+            const response = await axios({
+                method: "DELETE",
+                url: 'http://127.0.0.1:8000/musiclist/',
+                data: {
+                    MusicID: song.id,
+                    MusicListID: playlistName.musicListId
+                }
             });
-            if (response.data.success) {
+
+            if (response.status === 201) {
                 const updatedSongs = [...songs];
                 updatedSongs.splice(index, 1);
                 setSongs(updatedSongs);
@@ -98,25 +153,10 @@ function PlayList() {
             }
         } catch (error) {
             console.error('There was an error sending the request', error);
-            setErrorMessage("delete song failed, please try again later");
-            showErrorModal(true);
+            setErrorMessage("Delete song failed, please try again later");
+            setShowErrorModal(true);
         }
     };
-
-    useEffect(() => {
-        axios.get(`/api/playlists/${username}/${playlistName}`) //API wrong
-            .then(response => {
-                if (response.data) {
-                    setSongs(response.data.songs);
-                } else {
-                    setError(true);
-                }
-            })
-            .catch(error => {
-                console.error('Failed to fetch songs from the backend', error);
-                setError(true);
-            });
-    }, [playlistName, username]);
 
     const buttonStyle = {
         padding: '10px 20px',
@@ -139,19 +179,19 @@ function PlayList() {
     return (
         <div style={backgroundStyle}>
             {localUserRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
-            <Modal show={showErrorModal} onHide={() => {setShowErrorModal(false); setErrorMessage(null);}}>
+            <Modal show={showErrorModal} onHide={() => { setShowErrorModal(false); setErrorMessage(null); }}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Error</Modal.Title>
+                    <Modal.Title>Error</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <div className="error-modal-message">{errorMessage}</div>
+                    <div className="error-modal-message">{errorMessage}</div>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="secondary" onClick={() => {setShowErrorModal(false); setErrorMessage(null);}}>
-                    Close
-                  </Button>
+                    <Button variant="secondary" onClick={() => { setShowErrorModal(false); setErrorMessage(null); }}>
+                        Close
+                    </Button>
                 </Modal.Footer>
-              </Modal>
+            </Modal>
             <div className="d-flex flex-column justify-content-center align-items-center" style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '10px', marginTop: '15px' }}>
                 <span className="d-flex align-items-center" style={{ marginRight: '8px' }}>
                     {residentDetail && residentDetail.firstname ? `Hello ! ${residentDetail.firstname} ${residentDetail.lastname}` : 'Hello! '}
@@ -166,7 +206,7 @@ function PlayList() {
                 </div>
             )}
             <Link
-                to={ `/PublicMusicLibrary/${username}`}
+                to={`/PublicMusicLibrary/${username}`}
                 className="custom-button2"
                 style={positioningStyle}>
                 Add Music to the list
@@ -197,7 +237,7 @@ function PlayList() {
                             </div>
 
                             <div>
-                                <IconContext.Provider value={{ color: song.loved ? 'red' : 'black' }}>
+                                <IconContext.Provider value={{ color: isLoved(song) ? 'red' : 'black' }}>
                                     <FaHeart onClick={() => toggleLove(actualIndex)} style={{ cursor: 'pointer' }} />
                                 </IconContext.Provider>
                                 <FaTrash onClick={() => deleteSong(actualIndex)} style={{ cursor: 'pointer', marginLeft: '15px' }} />
