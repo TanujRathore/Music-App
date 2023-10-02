@@ -33,10 +33,10 @@ function PlayList() {
     const [errorMessage, setErrorMessage] = useState("");
     const [favouriteListId, setFavouriteListId] = useState(null);
     const [favouriteSongs, setFavouriteSongs] = useState([]);
-    const isLoved = song => favouriteSongs.some(favSong => favSong.id === song.id);
+    const [targetPlaylistId, setTargetPlaylistId] = useState(null);
+    const isLoved = song => favouriteSongs.some(favSong => favSong === song.musicID);
 
-
-
+    
     useEffect(() => {
         const fetchResidentDetails = async () => {
             try {
@@ -55,24 +55,37 @@ function PlayList() {
     }, [username]);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/musiclist/`)
-            .then(response => {
-                const userPlaylists = response.data.data.filter(list => list.userBelongTo === username);
-                const targetPlaylist = userPlaylists.find(list => list.musicListName === playlistName);
+        const fetchData = async () => {
+            try {
+                const { data: allSongsData } = await axios.get('http://127.0.0.1:8000/music/');
+                const allSongs = allSongsData.data;
+                const { data } = await axios.patch('http://127.0.0.1:8000/musiclist/', {
+                    username: username
+                });
+
+                const userPlaylists = data.data;  // Here's the extraction of the inner 'data' array
+
+                const favouriteList = userPlaylists.find(list => list.musicListName === "favourite");
+                const targetPlaylist = userPlaylists.find(list => list.musicListName === playlistName.replace("_", " "));
                 if (targetPlaylist) {
-                    setSongs(targetPlaylist.musicIn);
+                    const detailedSongs = targetPlaylist.musicIn.map(id => allSongs.find(song => song.musicID === id));
+                    setSongs(detailedSongs);
+                    setTargetPlaylistId(targetPlaylist.musicListId);
                 } else {
                     setError(true);
                 }
-                const favouriteList = response.data.data.find(list => list.musicListName === "Favourite");
                 if (favouriteList) {
                     setFavouriteSongs(favouriteList.musicIn);
+                    setFavouriteListId(favouriteList.musicListId);
                 }
-            })
-            .catch(error => {
-                console.error('Failed to fetch songs from the backend', error);
+
+            } catch (error) {
+                console.error('Failed to fetch data from the backend', error);
                 setError(true);
-            });
+            }
+        };
+
+        fetchData();
     }, [playlistName, username]);
 
     const nextPage = () => {
@@ -86,38 +99,28 @@ function PlayList() {
             setCurrentPage(currentPage - 1);
         }
     };
-    useEffect(() => {
-        axios.get('http://127.0.0.1:8000/musiclist/')
-            .then(response => {
-                const favouriteList = response.data.data.find(list => list.musicListName === "Favourite");
-                if (favouriteList) {
-                    setFavouriteListId(favouriteList.musicListId);
-                }
-            })
-            .catch(error => {
-                console.error('Failed to fetch playlists', error);
-            });
-    }, []);
 
-    const toggleLove = async (index) => {
-        const song = songs[index];
-        const action = song.loved ? "DELETE" : "POST";
-
+    const toggleLove = async (musicID) => {
+        const song = songs.find(song => song.musicID === musicID);
+        const action = isLoved(song) ? "DELETE" : "POST";
         if (favouriteListId) {
             try {
                 const response = await axios({
                     method: action,
                     url: 'http://127.0.0.1:8000/musiclist/',
                     data: {
-                        MusicID: song.id,
+                        MusicID: musicID,
                         MusicListID: favouriteListId
                     }
                 });
 
-                if (response.status === 201) {
-                    const updatedSongs = [...songs];
-                    updatedSongs[index].loved = !updatedSongs[index].loved;
-                    setSongs(updatedSongs);
+                if (response.status === 200) {
+                    // Instead of toggling loved, we update our favourite songs list.
+                    const updatedFavourites = isLoved(song) ?
+                        favouriteSongs.filter(id => id !== musicID) :
+                        [...favouriteSongs, musicID];
+
+                    setFavouriteSongs(updatedFavourites);
                 } else {
                     console.error('Failed to toggle love status');
                 }
@@ -131,23 +134,27 @@ function PlayList() {
         }
     };
 
-    const deleteSong = async (index) => {
-        const song = songs[index];
+    const deleteSong = async (musicID) => {
+        console.log('Deleting song with ID:', musicID, 'from playlist with ID:', targetPlaylistId,);
 
         try {
             const response = await axios({
                 method: "DELETE",
                 url: 'http://127.0.0.1:8000/musiclist/',
                 data: {
-                    MusicID: song.id,
-                    MusicListID: playlistName.musicListId
+                    MusicID: musicID,
+                    MusicListID: targetPlaylistId
                 }
             });
-
-            if (response.status === 201) {
+            if (response.status === 200) {
                 const updatedSongs = [...songs];
-                updatedSongs.splice(index, 1);
-                setSongs(updatedSongs);
+                const index = updatedSongs.findIndex(song => song.musicID === musicID);
+                if (index !== -1) {
+                    updatedSongs.splice(index, 1);
+                    setSongs(updatedSongs);
+                } else {
+                    console.error('Song not found in the list');
+                }
             } else {
                 console.error('Failed to delete the song');
             }
@@ -156,7 +163,7 @@ function PlayList() {
             setErrorMessage("Delete song failed, please try again later");
             setShowErrorModal(true);
         }
-    };
+    }
 
     const buttonStyle = {
         padding: '10px 20px',
@@ -217,10 +224,9 @@ function PlayList() {
             </Link>
 
             <div className="d-flex justify-content-center align-items-center flex-column">
-                {currentSongs.map((song, idx) => {
-                    const actualIndex = indexOfFirstSong + idx;
+                {currentSongs.map((song) => {
                     return (
-                        <div key={actualIndex}
+                        <div key={song.musicID}
                             style={{
                                 borderRadius: '10px',
                                 backgroundColor: 'white',
@@ -232,15 +238,15 @@ function PlayList() {
                             }}
                         >
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '50px' }}>{song.name}</span>
-                                <span>{song.artist}</span>
+                                <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '50px' }}>{song.musicName}</span>
+                                <span>{song.musicAuthor}</span>
                             </div>
 
                             <div>
                                 <IconContext.Provider value={{ color: isLoved(song) ? 'red' : 'black' }}>
-                                    <FaHeart onClick={() => toggleLove(actualIndex)} style={{ cursor: 'pointer' }} />
+                                    <FaHeart onClick={() => toggleLove(song.musicID)} style={{ cursor: 'pointer' }} />
                                 </IconContext.Provider>
-                                <FaTrash onClick={() => deleteSong(actualIndex)} style={{ cursor: 'pointer', marginLeft: '15px' }} />
+                                <FaTrash onClick={() => deleteSong(song.musicID)} style={{ cursor: 'pointer', marginLeft: '15px' }} />
                             </div>
                         </div>
                     );

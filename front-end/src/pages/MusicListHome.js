@@ -32,6 +32,7 @@ export default function MusicListHome() {
     useEffect(() => {
         const fetchResidentDetails = async () => {
             try {
+                // Fetch user details
                 const userResponse = await axios.get('http://127.0.0.1:8000/user/manage/');
                 const userDetail = userResponse.data.data.find(user => user.username === username);
                 if (userDetail) {
@@ -39,29 +40,42 @@ export default function MusicListHome() {
                 } else {
                     console.log("No user found with the given username");
                 }
-
-                const musicListResponse = await axios.get('http://127.0.0.1:8000/musiclist/', { params: { username } });
+    
+                // Fetch music list details
+                const musicListResponse = await axios.patch('http://127.0.0.1:8000/musiclist/', {
+                    username: username
+                });
+    
+                // Note: Based on the provided format, we use musicListResponse.data.data to get the list of music.
                 const musicListData = musicListResponse.data.data.filter(musicList => musicList.userBelongTo === username);
-
+    
                 const newMusicListIDs = {};
                 musicListData.forEach(musicList => {
                     newMusicListIDs[musicList.musicListName] = musicList.musicListId;
                 });
-
+    
                 setMusicListIDs(newMusicListIDs);
-
+    
             } catch (error) {
                 console.error('Error fetching resident details:', error);
             }
         };
+    
         fetchResidentDetails();
+    }, [username]);
+    
 
+    useEffect(() => {
         const fetchPlaylistImages = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/musiclist/', { params: { username } });
-                if (response.data && response.data.data) {
+                const response = await axios.patch('http://127.0.0.1:8000/musiclist/', {
+                    username: username
+                });
+    
+                const userPlaylists = response.data.data;
+                if (userPlaylists) {
                     const fetchedImages = {};
-                    for (let playlist of response.data.data) {
+                    for (let playlist of userPlaylists) {
                         if (playlist.userBelongTo === username) {
                             fetchedImages[playlist.musicListName] = playlist.musicListProfilePic;
                         }
@@ -74,6 +88,8 @@ export default function MusicListHome() {
         };
         fetchPlaylistImages();
     }, [username]);
+    
+        
 
     const handleImageClick = (playlistName) => {
         setSelectedPlaylistName(playlistName);
@@ -103,6 +119,8 @@ export default function MusicListHome() {
             });
             const updatedImages = { ...playlistImages };
             updatedImages[selectedPlaylistName] = response.data.filepath;
+            console.log(response.data)
+            console.log(response.data.filepath);
             setPlaylistImages(updatedImages);
 
             await axios.put('http://127.0.0.1:8000/musiclist/', {

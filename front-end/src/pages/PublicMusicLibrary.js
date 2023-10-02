@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate,Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
 import StaffNavbar from '../navibars/StaffNavbar';
@@ -38,9 +38,11 @@ function PublicMusicLibrary() {
     const indexOfLastSong = currentPage * songsPerPage;
     const indexOfFirstSong = indexOfLastSong - songsPerPage;
 
-    const filteredSongs = songs.filter(song =>
-        song.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredSongs = songs.filter(song =>{
+        const searchsong = `${song.musicName}`.toLowerCase();
+        return searchsong.includes(searchTerm.toLowerCase());
+});
+
 
     const totalPages = Math.ceil(filteredSongs.length / songsPerPage);
     const currentSongs = filteredSongs.slice(indexOfFirstSong, indexOfLastSong);
@@ -59,10 +61,10 @@ function PublicMusicLibrary() {
     };
 
     useEffect(() => {
-        axios.get(`/api/playlists`) // API to fetch all songs in the public
+        axios.get('http://127.0.0.1:8000/music/')
             .then(response => {
-                if (response.data) {
-                    setSongs(response.data.songs);
+                if (response.data && response.data.data) {
+                    setSongs(response.data.data);
                 } else {
                     setError(true);
                 }
@@ -72,45 +74,45 @@ function PublicMusicLibrary() {
                 setError(true);
             });
         return () => {
+            // Cleanup (if needed)
         };
     }, [playlistName, username]);
 
-    const toggleSongSelection = (songId) => {
-        if (selectedSongs.includes(songId)) {
-            setSelectedSongs(prevSongs => prevSongs.filter(id => id !== songId));
+
+    const toggleSongSelection = (musicID) => {
+        if (selectedSongs.includes(musicID)) {
+            setSelectedSongs(prevSongs => prevSongs.filter(id => id !== musicID));
         } else {
-            setSelectedSongs(prevSongs => [...prevSongs, songId]);
+            setSelectedSongs(prevSongs => [...prevSongs, musicID]);
         }
     };
 
     const addToPlaylist = async () => {
-        // Close the confirmation modal regardless of success/failure
         setShowConfirmationModal(false);
     
         try {
-            // First, get the MusicListID for the user's playlist
-            const musicListResponse = await axios.get('http://127.0.0.1:8000/musiclist/', {
-                params: {
-                    username
-                }
+            const { data } = await axios.patch('http://127.0.0.1:8000/musiclist/', {
+                username: username
             });
     
-            const userPlaylist = musicListResponse.data.find(list => list.musicListName === playlistName);
+            const userPlaylist = data.data.find(list => list.musicListName === playlistName.replace("_", " "));
     
             if (!userPlaylist) {
                 throw new Error('User playlist not found');
             }
     
             const musicListID = userPlaylist.musicListId;
-    
-            // Once we have the MusicListID, post each song to the playlist
-            for (let songId of selectedSongs) {
-                const response = await axios.post('http://127.0.0.1:8000/musiclist/', {
-                    MusicID: songId,
+            const promises = selectedSongs.map(musicID => 
+                axios.post('http://127.0.0.1:8000/musiclist/', {
+                    MusicID: musicID,
                     MusicListID: musicListID
-                });
+                })
+            );
     
-                if (!response.data || response.data.status !== 201) {
+            const responses = await Promise.all(promises);
+            for (const response of responses) {
+                if (!response.data || response.status  !== 200) {
+                    console.log(response.status);
                     throw new Error('Failed to add a song to playlist');
                 }
             }
@@ -126,6 +128,7 @@ function PublicMusicLibrary() {
         }
     };
     
+
 
     const buttonStyle = {
         padding: '10px 20px',
@@ -156,12 +159,12 @@ function PublicMusicLibrary() {
             <Link to={`/MusicListHome/${username}/${playlistName}`} style={{ position: 'absolute', top: '80px', left: '20px', textDecoration: 'none' }}>
                 <img src={backButtonIcon} alt="Back to Music List Home" style={{ width: '30px', height: '30px' }} />
             </Link>
-            <Form onSubmit={handleSearch} className="mb-3" style={{ maxWidth: '1100px', margin: '0 auto' }}>
+            <Form onSubmit={handleSearch} className="mb-3" style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <Form.Group controlId="searchTerm">
                     <Form.Label>Please enter the song name to search</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Search song name"
+                        placeholder="Enter search song name here"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                     />
@@ -173,12 +176,41 @@ function PublicMusicLibrary() {
                 </div>
             )}
             {/* Render Songs */}
-            {currentSongs.map(song => (
-                <div key={song.id} className="songItem">
-                    <input type="checkbox" checked={selectedSongs.includes(song.id)} onChange={() => toggleSongSelection(song.id)} />
-                    <span>{song.name}</span>
-                </div>
-            ))}
+            <div className="d-flex justify-content-center align-items-center flex-column">
+                {currentSongs.map((song) => {
+                    return (
+                        <div key={song.musicID}
+                            style={{
+                                borderRadius: '10px',
+                                backgroundColor: 'white',
+                                padding: '20px',
+                                width: '1200px',
+                                margin: '10px 0',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <span style={{ fontSize: '20px', fontWeight: 'bold', marginRight: '50px' }}>{song.musicName}</span>
+                                <span>{song.musicAuthor}</span>
+                            </div>
+                            <input
+                                type="checkbox"
+                                checked={selectedSongs.includes(song.musicID)}
+                                onChange={() => toggleSongSelection(song.musicID)}
+                                style={{
+                                    width: '25px',
+                                    height: '25px',
+                                    marginRight: '10px'
+                                }}
+                            />
+                        </div>
+                    );
+                })}
+            </div>
+
+
 
             {/* Pagination Logic */}
             <div className="pagination-controls" style={{ position: 'absolute', bottom: '50px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -208,8 +240,8 @@ function PublicMusicLibrary() {
                     <div>Following songs will be added to the playlist:</div>
                     <ul>
                         {selectedSongs.map(songId => {
-                            const song = songs.find(s => s.id === songId);
-                            return <li key={songId}>{song?.name}</li>
+                            const song = songs.find(s => s.musicID === songId);
+                            return <li key={songId}>{song?.musicName} - {song?.musicAuthor}</li>
                         })}
                     </ul>
                 </Modal.Body>
@@ -217,7 +249,7 @@ function PublicMusicLibrary() {
                     <Button variant="secondary" onClick={() => setShowConfirmationModal(false)}>
                         Cancel
                     </Button>
-                    <Button variant="primary" style={{ backgroundColor: '#2c82cd', borderColor: '#2c82cd' }}onClick={addToPlaylist}>
+                    <Button variant="primary" style={{ backgroundColor: '#2c82cd', borderColor: '#2c82cd' }} onClick={addToPlaylist}>
                         Confirm
                     </Button>
                 </Modal.Footer>
