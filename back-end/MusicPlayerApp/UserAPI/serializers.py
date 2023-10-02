@@ -29,8 +29,8 @@ class UserRoleSerializer(serializers.ModelSerializer):
         
         # create the five default music lists for this user
         MusicList.objects.create(musicListName="Favourite", userBelongTo=user_instance.username)
-        MusicList.objects.create(musicListName="Morning Motivation", userBelongTo=user_instance.username)
-        MusicList.objects.create(musicListName="Daily Activity Background", userBelongTo=user_instance.username)
-        MusicList.objects.create(musicListName="Afternoon Relaxation", userBelongTo=user_instance.username)
-        MusicList.objects.create(musicListName="Sleep Preparation", userBelongTo=user_instance.username)
+        MusicList.objects.create(musicListName="Morning Motivation", userBelongTo=user_instance.username, musicListProfilePic="CDSQUAD/back-end/media/MorningMotivation")
+        MusicList.objects.create(musicListName="Daily Activity Background", userBelongTo=user_instance.username, musicListProfilePic="CDSQUAD/back-end/media/DailyActivityBackground")
+        MusicList.objects.create(musicListName="Afternoon Relaxation", userBelongTo=user_instance.username, musicListProfilePic="CDSQUAD/back-end/media/AfternoonRelaxation")
+        MusicList.objects.create(musicListName="Sleep Preparation", userBelongTo=user_instance.username, musicListProfilePic="CDSQUAD/back-end/media/SleepPreparation")
         return user_instance
