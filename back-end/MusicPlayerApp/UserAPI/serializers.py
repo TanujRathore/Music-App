@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from MusicPlayerApp.models import UserRole, MusicList, Musics
+from MusicPlayerApp.models import UserRole, MusicList
 
 class MusicListSerializer(serializers.ModelSerializer):
     class Meta:

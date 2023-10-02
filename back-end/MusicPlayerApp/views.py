@@ -6,7 +6,7 @@ from rest_framework.parsers import JSONParser
 
 from django.http.response import JsonResponse
 
-from MusicPlayerApp.models import MusicList,Musics,UserRole
+from MusicPlayerApp.models import MusicList,Music,UserRole
 
 from MusicPlayerApp.serializers import MusicListSerializer,MusicSerializer
 
@@ -23,7 +23,7 @@ def musicApi(request,id=0):
     refresh_token = str(refresh)
 
     if request.method=='GET':
-        musics = Musics.objects.all()
+        musics = Music.objects.all()
         music_serializer = MusicSerializer(musics, many=True) 
         return JsonResponse ({
             'data': music_serializer.data,
@@ -49,7 +49,7 @@ def musicApi(request,id=0):
 
     elif request.method=='PUT':
         musics_data = JSONParser().parse(request)
-        music = Musics.objects.get(MusicID=musics_data['MusicID']) 
+        music = Music.objects.get(MusicID=musics_data['MusicID']) 
         musics_serializer = MusicSerializer(music, data=musics_data)
         if musics_serializer.is_valid():
             musics_serializer.save()
@@ -65,7 +65,7 @@ def musicApi(request,id=0):
         }, safe=False) 
 
     elif request.method=='DELETE':
-        music = Musics.objects.get(MusicID=id)
+        music = Music.objects.get(MusicID=id)
         music.delete()
         return JsonResponse ({
             'message':"Deleted Successfully!!",
