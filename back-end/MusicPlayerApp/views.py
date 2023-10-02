@@ -132,23 +132,38 @@ def musiclistApi(request):
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }, safe=False, status = 404)
-
+    
+    # update picture
     elif request.method == 'PUT':
         musiclist_data = JSONParser().parse(request)
-        musiclist = MusicList.objects.get(MusicListId=musiclist_data['MusicListId'])
-        musiclist_serializer = MusicListSerializer(musiclist, data=musiclist_data)
-        if musiclist_serializer.is_valid():
-            musiclist_serializer.save()
+        musicPic = musiclist_data.get("MusicPic")
+        musicListId = musiclist_data.get("MusicListID")
+
+        try:
+            musiclist = MusicList.objects.get(musicListId = musicListId)
+
+            musiclist.musicListProfilePic = musicPic
+            musiclist.save()
+
             return JsonResponse({
-                'message': "Updated Successfully!!",
+                'message': "MusicList Picture Updated Successfully!!",
                 'access_token': access_token,
                 'refresh_token': refresh_token
-            }, safe=False)
-        return JsonResponse({
-            'message': "Failed to Update.",
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }, safe=False)
+            }, safe=False, status=200)
+
+        except MusicList.DoesNotExist:
+            return JsonResponse({
+                'message': "MusicList not found.",
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, safe=False, status=404)
+        except:
+            return JsonResponse({
+                'message': "Failed to Update MusicList Picture.",
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, safe=False, status=500)
+
 
     elif request.method == 'DELETE':
         musiclist_data = JSONParser().parse(request)
