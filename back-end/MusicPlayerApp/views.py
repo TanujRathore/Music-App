@@ -81,6 +81,7 @@ def musiclistApi(request, username):
     access_token = str(refresh.access_token)
     refresh_token = str(refresh)
 
+    # get MusicList Information
     if request.method == 'GET':
         try:
             user = UserRole.objects.get(username=username)
