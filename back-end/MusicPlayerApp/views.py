@@ -16,6 +16,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.http import HttpResponseBadRequest
 
+from google.cloud import storage
+from datetime import datetime, timedelta
+client = storage.Client.from_service_account_json(r'D:\University\sem6\IT\CDSquad\back-end\MusicPlayerApp\corded-evening-400913-ce5bbb69ae1e.json')
 @csrf_exempt
 def musicApi(request,id=0):
     refresh = RefreshToken.for_user(request.user)
@@ -74,6 +77,17 @@ def musicApi(request,id=0):
         }, safe=False)
     
 
+
+# get picture URL
+def get_signed_url_for_blob(bucket_name, blob_name):
+    storage_client = client
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    url_expiration = datetime.now() + timedelta(minutes=1)
+    return blob.generate_signed_url(expiration=url_expiration, method='GET')
+
+
+
 @csrf_exempt
 def musiclistApi(request):
     # Generate tokens
@@ -104,6 +118,14 @@ def musiclistApi(request):
 
         # get Music List
         musiclists = MusicList.objects.filter(userBelongTo=username)[:5]
+
+        # Update the musicListProfilePic for each musicList with the signed URL.
+        for musiclist in musiclists:
+            if musiclist.musicListProfilePic:
+                blob_name = "MusicList Pic/" + musiclist.musicListProfilePic + ".jpg"  # Assuming .jpg extension, modify as needed
+                signed_url = get_signed_url_for_blob('cdsquad', blob_name)
+                musiclist.musicListProfilePic = signed_url
+
         musiclist_serializer = MusicListSerializer(musiclists, many=True)
         
         return JsonResponse({

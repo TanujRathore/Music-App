@@ -17,7 +17,7 @@ class UserRole(models.Model):
 class MusicList(models.Model):
     musicListId = models.AutoField(primary_key=True)
     musicListName = models.CharField(max_length=100, default='favourite')
-    musicListProfilePic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    musicListProfilePic = models.CharField(max_length=100, null=True, blank=True)
     userBelongTo = models.ForeignKey(UserRole, on_delete=models.CASCADE, related_name="music_lists")
     musicIn = models.ManyToManyField(Music)
     
