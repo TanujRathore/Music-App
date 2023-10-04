@@ -18,7 +18,17 @@ from django.http import HttpResponseBadRequest
 
 from google.cloud import storage
 from datetime import datetime, timedelta
-client = storage.Client.from_service_account_json(r'D:\University\sem6\IT\CDSquad\back-end\MusicPlayerApp\corded-evening-400913-ce5bbb69ae1e.json')
+from google.cloud import storage
+
+
+import os
+from django.conf import settings
+
+json_file_path = os.path.join(settings.BASE_DIR, 'corded-evening-400913-ce5bbb69ae1e.json')
+
+client = storage.Client.from_service_account_json(json_file_path)
+
+
 @csrf_exempt
 def musicApi(request,id=0):
     refresh = RefreshToken.for_user(request.user)
