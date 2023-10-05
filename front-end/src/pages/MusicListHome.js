@@ -125,28 +125,32 @@ export default function MusicListHome() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("MusicListID", musicListIDs[selectedPlaylistName]);
+    // const formData = new FormData();
+    // formData.append("file", file);
+    // formData.append("MusicListID", musicListIDs[selectedPlaylistName]);
 
+
+    // get signedUrl from backend
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/upload/",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      const updatedImages = { ...playlistImages };
-      updatedImages[selectedPlaylistName] = response.data.filepath;
-      console.log(response.data);
-      console.log(response.data.filepath);
-      setPlaylistImages(updatedImages);
-
-      await axios.put("http://127.0.0.1:8000/musiclist/", {
-        MusicListID: musicListIDs[selectedPlaylistName],
-        musicListProfilePic: response.data.filepath,
+      const response = await axios.patch("http://127.0.0.1:8000/upload/",{
+        MusicListID: musicListIDs[selectedPlaylistName]
       });
+      uploadUrl = response.data.uploadUrl
+      setPlaylistImages(musicListIDs[selectedPlaylistName].toString());
+      
+      // upload to GSC
+      const responseUpload = await fetch(uploadUrl, {
+            method: 'POST',
+            body: file,
+            headers: {
+                'Content-Type': file.type
+            }
+        });
+      if (responseUpload.ok) {
+          console.log('File uploaded successfully!');
+      } else {
+          console.error('File upload failed:', responseUpload.statusText);
+      }
 
       setShowModal(false);
     } catch (error) {
@@ -272,7 +276,7 @@ export default function MusicListHome() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button variant="primary" onClick={uploadImage}>
+          <Button variant="primary" onClick={uploadImage()}>
             Upload
           </Button>
         </Modal.Footer>
