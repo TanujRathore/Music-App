@@ -45,8 +45,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt'
 ]
 
-CORS_ALLOW_ORIGINS = ["https://cyprien0312.github.io"]
-
+CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOWED_ORIGINS = [
+#    "https://cyprien0312.github.io"
+#]
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
