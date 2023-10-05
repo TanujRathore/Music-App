@@ -34,6 +34,7 @@ function PlayList() {
   const [favouriteListId, setFavouriteListId] = useState(null);
   const [favouriteSongs, setFavouriteSongs] = useState([]);
   const [targetPlaylistId, setTargetPlaylistId] = useState(null);
+
   const isLoved = (song) =>
     favouriteSongs.some((favSong) => favSong === song.musicID);
 
@@ -179,6 +180,9 @@ function PlayList() {
       setShowErrorModal(true);
     }
   };
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
 
   const buttonStyle = {
     padding: "10px 20px",
@@ -239,8 +243,10 @@ function PlayList() {
           style={{ marginRight: "8px" }}
         >
           {residentDetail && residentDetail.firstname
-            ? `Hello ! ${residentDetail.firstname} ${residentDetail.lastname}`
-            : "Hello! "}
+            ? `Hello ! ${capitalizeFirstLetter(
+                residentDetail.firstname
+              )} ${capitalizeFirstLetter(residentDetail.lastname)}`
+            : "Hello!"}
         </span>
         <span
           className="d-flex align-items-center"

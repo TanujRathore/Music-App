@@ -24,12 +24,13 @@ export default function MusicListHome() {
     backgroundSize: "cover",
     backgroundPosition: "center",
     minHeight: "100vh",
+    backgroundColor: "#ace4e6",
   };
 
   const [residentDetail, setResidentDetail] = useState({});
   const [musicListIDs, setMusicListIDs] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const [refreshList,setRefreshList] = useState(0);
+  const [refreshList, setRefreshList] = useState(0);
   const [selectedPlaylistName, setSelectedPlaylistName] = useState(null);
   const [playlistImages, setPlaylistImages] = useState({
     "Morning Motivation": "",
@@ -104,7 +105,11 @@ export default function MusicListHome() {
       }
     };
     fetchPlaylistImages();
-  }, [username,refreshList]);
+  }, [username, refreshList]);
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
 
   const handleImageClick = (playlistName) => {
     setSelectedPlaylistName(playlistName);
@@ -112,7 +117,6 @@ export default function MusicListHome() {
   };
 
   const uploadImage = async () => {
-
     const file = document.getElementById("fileInput").files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
@@ -127,34 +131,31 @@ export default function MusicListHome() {
       return;
     }
 
-
     // get signedUrl from backend
     try {
-      const response = await axios.patch("http://127.0.0.1:8000/upload/",{
+      const response = await axios.patch("http://127.0.0.1:8000/upload/", {
         MusicListID: musicListIDs[selectedPlaylistName],
-        fileType: file.type
+        fileType: file.type,
       });
       const uploadUrl = response.data.uploadUrl;
 
-
       // upload to GSC
       const responseUpload = await fetch(uploadUrl, {
-            method: 'PUT',
-            body: file,
-            headers: {
-                'Content-Type': file.type
-            }
-        });
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
       if (responseUpload.ok) {
-          console.log('File uploaded successfully!');
+        console.log("File uploaded successfully!");
       } else {
-          console.error('File upload failed:', responseUpload.statusText);
+        console.error("File upload failed:", responseUpload.statusText);
       }
       // refresh playlistImages
       let i = refreshList;
-      setRefreshList(i+1);
+      setRefreshList(i + 1);
       setShowModal(false);
-
     } catch (error) {
       console.error("Error uploading the image:", error);
     }
@@ -164,23 +165,26 @@ export default function MusicListHome() {
     <div>
       {localUserRole === "staff" ? <StaffNavbar /> : <LogoutNavbar />}
       <div
-        style={{
-          position: "absolute",
-          top: "100px",
-          left: "110px",
-          color: "black",
-          fontSize: "38px",
-          fontWeight: "bold",
-        }}
-      >
-        {residentDetail && residentDetail.firstname
-          ? `Hello ! ${residentDetail.firstname} ${residentDetail.lastname}`
-          : "Hello!"}
-      </div>
-      <div
         style={backgroundStyle}
-        className="d-flex justify-content-center align-items-center"
+        className="d-flex flex-column justify-content-center align-items-center"
       >
+        <div
+          style={{
+            color: "black",
+            fontSize: "38px",
+            fontWeight: "bold",
+            width: "100%",
+            textAlign: "left",
+            marginBottom: "2vh",
+            marginLeft: "20vh",
+          }}
+        >
+          {residentDetail && residentDetail.firstname
+            ? `Hello ! ${capitalizeFirstLetter(
+                residentDetail.firstname
+              )} ${capitalizeFirstLetter(residentDetail.lastname)}`
+            : "Hello!"}
+        </div>
         <Row>
           {[
             "Morning Motivation",
@@ -188,7 +192,7 @@ export default function MusicListHome() {
             "Afternoon Relaxation",
             "Sleep Preparation",
           ].map((playlistName) => (
-            <Col md={3} key={playlistName}>
+            <Col md={3} sm={6} xs={12} key={playlistName}>
               <Link
                 to={{
                   pathname: `/MusicListHome/${username}/${playlistName.replace(
@@ -200,11 +204,11 @@ export default function MusicListHome() {
               >
                 <Card
                   style={{
-                    width: "300px",
-                    height: "550px",
-                    marginBottom: "20px",
+                    width: "20vw",
+                    height: "60vh",
+                    marginBottom: "2vh",
                     position: "relative",
-                    margin_right: "10px",
+                    marginRight: "1vw",
                   }}
                 >
                   <div
