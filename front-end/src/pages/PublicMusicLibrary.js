@@ -87,7 +87,6 @@ function PublicMusicLibrary() {
   };
   const addToPlaylist = async () => {
     try {
-      // 获取用户歌单
       const { data } = await axios.patch("http://127.0.0.1:8000/musiclist/", {
         username: username,
       });
@@ -99,22 +98,14 @@ function PublicMusicLibrary() {
       if (!userPlaylist) {
         throw new Error("User playlist not found");
       }
-
-      // 获取歌单中已存在的歌曲
       const existingSongIds = userPlaylist.musicIn;
-
-      // 筛选出尚未添加到歌单中的歌曲
       const songsToAdd = selectedSongs.filter(
         (songId) => !existingSongIds.includes(songId)
       );
-
-      // 如果所有选中的歌曲都已存在，则提示用户
       if (songsToAdd.length === 0) {
         alert("All selected songs are already in the playlist.");
         return;
       }
-
-      // 如果部分歌曲已存在，则提示用户
       if (songsToAdd.length < selectedSongs.length) {
         const existingSongs = selectedSongs
           .filter((songId) => existingSongIds.includes(songId))
@@ -127,10 +118,9 @@ function PublicMusicLibrary() {
             ", "
           )}`
         );
-        // 如果你不希望已存在的歌曲影响到添加操作，可以选择继续执行，否则可以return退出函数。
       }
 
-      // 为歌单添加新歌曲
+      // add new song
       const musicListID = userPlaylist.musicListId;
       const promises = songsToAdd.map((musicID) =>
         axios.post("http://127.0.0.1:8000/musiclist/", {
