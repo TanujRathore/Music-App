@@ -103,7 +103,7 @@ export default function MusicListHome() {
       }
     };
     fetchPlaylistImages();
-  }, [username]);
+  }, [username,playlistImages]);
 
   const handleImageClick = (playlistName) => {
     setSelectedPlaylistName(playlistName);
@@ -111,6 +111,7 @@ export default function MusicListHome() {
   };
 
   const uploadImage = async () => {
+
     const file = document.getElementById("fileInput").files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
@@ -125,22 +126,19 @@ export default function MusicListHome() {
       return;
     }
 
-    // const formData = new FormData();
-    // formData.append("file", file);
-    // formData.append("MusicListID", musicListIDs[selectedPlaylistName]);
-
 
     // get signedUrl from backend
     try {
       const response = await axios.patch("http://127.0.0.1:8000/upload/",{
-        MusicListID: musicListIDs[selectedPlaylistName]
+        MusicListID: musicListIDs[selectedPlaylistName],
+        fileType: file.type
       });
-      uploadUrl = response.data.uploadUrl
-      setPlaylistImages(musicListIDs[selectedPlaylistName].toString());
-      
+      const uploadUrl = response.data.uploadUrl
+
+
       // upload to GSC
       const responseUpload = await fetch(uploadUrl, {
-            method: 'POST',
+            method: 'PUT',
             body: file,
             headers: {
                 'Content-Type': file.type
@@ -151,8 +149,10 @@ export default function MusicListHome() {
       } else {
           console.error('File upload failed:', responseUpload.statusText);
       }
+      // update playlistImages
 
       setShowModal(false);
+
     } catch (error) {
       console.error("Error uploading the image:", error);
     }
@@ -276,7 +276,7 @@ export default function MusicListHome() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button variant="primary" onClick={uploadImage()}>
+          <Button variant="primary" onClick={() => uploadImage()}>
             Upload
           </Button>
         </Modal.Footer>

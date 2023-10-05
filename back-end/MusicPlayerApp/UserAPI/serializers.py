@@ -34,10 +34,10 @@ class UserRoleSerializer(serializers.ModelSerializer):
                 # create the five default music lists for this user
                 if user_instance.role == "family_member":
                     MusicList.objects.create(musicListName="Favourite", userBelongTo=user_instance)
-                    MusicList.objects.create(musicListName="Morning Motivation", userBelongTo=user_instance, musicListProfilePic="MorningMotivation")
-                    MusicList.objects.create(musicListName="Daily Activity", userBelongTo=user_instance, musicListProfilePic="DailyActivity")
-                    MusicList.objects.create(musicListName="Afternoon Relaxation", userBelongTo=user_instance, musicListProfilePic="AfternoonRelaxation")
-                    MusicList.objects.create(musicListName="Sleep Preparation", userBelongTo=user_instance, musicListProfilePic="SleepPreparation")
+                    MusicList.objects.create(musicListName="Morning Motivation", userBelongTo=user_instance, musicListProfilePic="MorningMotivation.jpg")
+                    MusicList.objects.create(musicListName="Daily Activity", userBelongTo=user_instance, musicListProfilePic="DailyActivity.png")
+                    MusicList.objects.create(musicListName="Afternoon Relaxation", userBelongTo=user_instance, musicListProfilePic="AfternoonRelaxation.jpg")
+                    MusicList.objects.create(musicListName="Sleep Preparation", userBelongTo=user_instance, musicListProfilePic="SleepPreparation.jpg")
         except Exception as e:
             print(f"Error creating user and music lists: {str(e)}")
 

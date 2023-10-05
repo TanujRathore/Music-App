@@ -29,6 +29,15 @@ json_file_path = os.path.join(settings.BASE_DIR, 'corded-evening-400913-ce5bbb69
 client = storage.Client.from_service_account_json(json_file_path)
 
 
+MIME_TO_EXTENSION = {
+    'image/jpeg': '.jpg',
+    'image/png': '.png',
+    'image/gif': '.gif'
+}
+
+BUCKET_NAME = 'cdsquad'
+
+
 @csrf_exempt
 def musicApi(request,id=0):
     refresh = RefreshToken.for_user(request.user)
@@ -89,12 +98,29 @@ def musicApi(request,id=0):
 
 
 # get picture URL
-def get_signed_url_for_blob(bucket_name, blob_name):
-    storage_client = client
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    url_expiration = datetime.now() + timedelta(minutes=1)
-    return blob.generate_signed_url(expiration=url_expiration, method='GET')
+def get_signed_url_for_blob(bucketName, blobName):
+    storageClient = client
+    bucket = storageClient.bucket(bucketName)
+    blob = bucket.blob(blobName)
+    urlExpiration = datetime.now() + timedelta(minutes=5)
+    return blob.generate_signed_url(expiration=urlExpiration, method='GET')
+
+
+def generate_upload_signed_url(bucketName, blobName, fileType):
+    storageClient = client
+    bucket = storageClient.bucket(bucketName)
+    blob = bucket.blob(blobName)
+    
+    urlExpiration = datetime.now() + timedelta(minutes=30)
+
+    signedUrl = blob.generate_signed_url(
+        expiration=urlExpiration,
+        method='PUT',
+        content_type = fileType
+    )
+
+    return signedUrl
+
 
 
 
@@ -132,8 +158,8 @@ def musiclistApi(request):
         # Update the musicListProfilePic for each musicList with the signed URL.
         for musiclist in musiclists:
             if musiclist.musicListProfilePic:
-                blob_name = "MusicList Pic/" + musiclist.musicListProfilePic + ".jpg"  # Assuming .jpg extension, modify as needed
-                signed_url = get_signed_url_for_blob('cdsquad', blob_name)
+                blob_name = "MusicList Pic/" + musiclist.musicListProfilePic
+                signed_url = get_signed_url_for_blob(BUCKET_NAME, blob_name)
                 musiclist.musicListProfilePic = signed_url
 
         musiclist_serializer = MusicListSerializer(musiclists, many=True)
@@ -241,20 +267,36 @@ def SaveFile(request):
     refresh = RefreshToken.for_user(request.user)
     access_token = str(refresh.access_token)
     refresh_token = str(refresh)
+    if request.method == 'PATCH':
+        musiclistData = JSONParser().parse(request)
+        musicListId = musiclistData.get("MusicListID")
+        picType = musiclistData.get("fileType")
+        fileName = str(musicListId) + MIME_TO_EXTENSION[picType]
+        blobName = "MusicList Pic/" + fileName
+        try:
+            musiclist = MusicList.objects.get(musicListId = musicListId)
+            musiclist.musicListProfilePic = fileName
+            blobUrl = generate_upload_signed_url(BUCKET_NAME,blobName,picType)
+            musiclist.save()
 
-    if request.method == 'POST':
-        file = request.FILES.get('file')
-        if file:
-            file_name = default_storage.save(file.name, file)
             return JsonResponse({
-                "file_name": file_name,
-                "access_token": access_token,
-                "refresh_token": refresh_token
-            }, status=200)
-        else:
+                'message': "MusicList Picture Updated Successfully!!",
+                'uploadUrl': blobUrl,
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, safe=False, status=200)
+
+        except MusicList.DoesNotExist:
             return JsonResponse({
-                "error": "No file uploaded",
-                "access_token": access_token,
-                "refresh_token": refresh_token
-            }, status=400)
-    return HttpResponseBadRequest('Invalid request method')
+                'message': "MusicList not found.",
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, safe=False, status=404)
+        except:
+            return JsonResponse({
+                'message': "Failed to Update MusicList Picture.",
+                'access_token': access_token,
+                'refresh_token': refresh_token
+            }, safe=False, status=500)
+
+
