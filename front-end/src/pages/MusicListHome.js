@@ -29,6 +29,7 @@ export default function MusicListHome() {
   const [residentDetail, setResidentDetail] = useState({});
   const [musicListIDs, setMusicListIDs] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [refreshList,setRefreshList] = useState(0);
   const [selectedPlaylistName, setSelectedPlaylistName] = useState(null);
   const [playlistImages, setPlaylistImages] = useState({
     "Morning Motivation": "",
@@ -103,7 +104,7 @@ export default function MusicListHome() {
       }
     };
     fetchPlaylistImages();
-  }, [username,playlistImages]);
+  }, [username,refreshList]);
 
   const handleImageClick = (playlistName) => {
     setSelectedPlaylistName(playlistName);
@@ -133,7 +134,7 @@ export default function MusicListHome() {
         MusicListID: musicListIDs[selectedPlaylistName],
         fileType: file.type
       });
-      const uploadUrl = response.data.uploadUrl
+      const uploadUrl = response.data.uploadUrl;
 
 
       // upload to GSC
@@ -149,8 +150,9 @@ export default function MusicListHome() {
       } else {
           console.error('File upload failed:', responseUpload.statusText);
       }
-      // update playlistImages
-
+      // refresh playlistImages
+      let i = refreshList;
+      setRefreshList(i+1);
       setShowModal(false);
 
     } catch (error) {
