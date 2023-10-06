@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-from .models import Musics, UserRole, MusicList
+from .models import Music, UserRole, MusicList
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
 class UserAPITestCase(TestCase):
