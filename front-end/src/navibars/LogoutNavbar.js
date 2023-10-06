@@ -23,16 +23,16 @@ export default function LogoutNavbar() {
         <Button variant="outline-primary" onClick={() => setShow(true)} className="ml-auto custom-button2">
           Sign out
         </Button>
-        <Toast show={show} onClose={() => setShow(false)} style={{position: 'absolute', top: '90%', left: '40%'}}>
+        <Toast show={show} onClose={() => setShow(false)} className="custom-toast">
           <Toast.Header>
             <strong className="me-auto"></strong>
           </Toast.Header>
           <Toast.Body>Are you sure you want to sign out?</Toast.Body>
           <div className="d-flex justify-content-around mt-2">
-            <Button as={Link} to="/" variant="info" className="mr-2">
+            <Button as={Link} to="/" style={{ backgroundColor: '#7dc5eb', borderColor: '#7dc5eb' }}variant="info" className="mr-2">
               Yes
             </Button>
-            <Button variant="info" onClick={() => setShow(false)}>No</Button>
+            <Button variant="info" style={{ backgroundColor: '#7dc5eb', borderColor: '#7dc5eb' }}onClick={() => setShow(false)}>No</Button>
           </div>
           <div className="mt-2"></div>
         </Toast>

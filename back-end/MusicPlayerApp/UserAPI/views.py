@@ -21,7 +21,6 @@ def manageAPI(request, name=0):
             'access_token': access_token,
             'refresh_token': refresh_token
         }, safe=False)
-
     elif request.method == 'POST':
         user_data = JSONParser().parse(request)
         if UserRole.objects.filter(username=user_data['username']).exists():
@@ -30,9 +29,11 @@ def manageAPI(request, name=0):
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }, safe=False, status=400)
+
         userRoles_serializer = UserRoleSerializer(data=user_data)
         if userRoles_serializer.is_valid():
             userRoles_serializer.save()
+            
             return JsonResponse({
                 'message': "Added Successfully!!",
                 'access_token': access_token,
@@ -43,6 +44,7 @@ def manageAPI(request, name=0):
             'access_token': access_token,
             'refresh_token': refresh_token
         }, safe=False, status=400)
+
 
     elif request.method == 'PUT':
         user_data = JSONParser().parse(request)

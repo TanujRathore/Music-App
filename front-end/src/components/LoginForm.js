@@ -61,14 +61,7 @@ export default function LoginForm() {
 
   return (
     <div className="d-flex flex-column align-items-center">
-      <div className="custom-toast">
-        <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide>
-          <Toast.Header>
-            <strong className="me-auto">Notification</strong>
-          </Toast.Header>
-          <Toast.Body>{toastMessage}</Toast.Body>
-        </Toast>
-      </div>
+      
       <div className="logo-container text-center mb-4">
         <img src={logoImage} alt="Logo" className="custom-logo" />
       </div>
@@ -136,6 +129,14 @@ export default function LoginForm() {
       <div className="text-center mt-3">
         Haven't had an account?
         <a href="/signup"> Sign up Now</a>
+      </div>
+      <div className="custom-toast">
+        <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide>
+          <Toast.Header>
+            <strong className="me-auto">Notification</strong>
+          </Toast.Header>
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
       </div>
     </div>
   );

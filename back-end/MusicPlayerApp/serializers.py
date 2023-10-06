@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from MusicPlayerApp.models import MusicList, Musics
+from MusicPlayerApp.models import MusicList, Music
 
 class MusicListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,5 +8,5 @@ class MusicListSerializer(serializers.ModelSerializer):
         
 class MusicSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Musics
+        model = Music
         fields = '__all__'

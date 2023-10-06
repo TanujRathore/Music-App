@@ -94,13 +94,11 @@
 .custom-toast {
   background-color: #ace4e6;
   position: fixed;
-  top: 50%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10000;
-  
+  z-index: 9999;
 }
-
 .form-label {
   font-size: 18px;
   font-weight: 600;
@@ -144,4 +142,7 @@
   text-align: center;
   padding: 15px;
 }
+
+
+
 
