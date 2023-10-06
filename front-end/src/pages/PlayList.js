@@ -41,7 +41,7 @@ function PlayList() {
   useEffect(() => {
     const fetchResidentDetails = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/user/manage/");
+        const response = await axios.get(process.env.REACT_APP_BACKEND_URL+"user/manage/");
         const userDetail = response.data.data.find(
           (user) => user.username === username
         );
@@ -61,10 +61,10 @@ function PlayList() {
     const fetchData = async () => {
       try {
         const { data: allSongsData } = await axios.get(
-          "http://127.0.0.1:8000/music/"
+          process.env.REACT_APP_BACKEND_URL+"music/"
         );
         const allSongs = allSongsData.data;
-        const { data } = await axios.patch("http://127.0.0.1:8000/musiclist/", {
+        const { data } = await axios.patch(process.env.REACT_APP_BACKEND_URL+"musiclist/", {
           username: username,
         });
 
@@ -117,7 +117,7 @@ function PlayList() {
       try {
         const response = await axios({
           method: action,
-          url: "http://127.0.0.1:8000/musiclist/",
+          url: process.env.REACT_APP_BACKEND_URL+"musiclist/",
           data: {
             MusicID: musicID,
             MusicListID: favouriteListId,
@@ -154,7 +154,7 @@ function PlayList() {
     try {
       const response = await axios({
         method: "DELETE",
-        url: "http://127.0.0.1:8000/musiclist/",
+        url: process.env.REACT_APP_BACKEND_URL+"musiclist/",
         data: {
           MusicID: musicID,
           MusicListID: targetPlaylistId,

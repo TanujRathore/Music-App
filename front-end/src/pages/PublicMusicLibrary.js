@@ -61,7 +61,7 @@ function PublicMusicLibrary() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/music/")
+      .get(process.env.REACT_APP_BACKEND_URL+"music/")
       .then((response) => {
         if (response.data && response.data.data) {
           setSongs(response.data.data);
@@ -87,7 +87,7 @@ function PublicMusicLibrary() {
   };
   const addToPlaylist = async () => {
     try {
-      const { data } = await axios.patch("http://127.0.0.1:8000/musiclist/", {
+      const { data } = await axios.patch(process.env.REACT_APP_BACKEND_URL+"musiclist/", {
         username: username,
       });
 
@@ -123,7 +123,7 @@ function PublicMusicLibrary() {
       // add new song
       const musicListID = userPlaylist.musicListId;
       const promises = songsToAdd.map((musicID) =>
-        axios.post("http://127.0.0.1:8000/musiclist/", {
+        axios.post(process.env.REACT_APP_BACKEND_URL+"musiclist/", {
           MusicID: musicID,
           MusicListID: musicListID,
         })

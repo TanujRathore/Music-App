@@ -20,7 +20,7 @@ function ResidentPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/user/manage/')
+    axios.get(process.env.REACT_APP_BACKEND_URL+'user/manage/')
       .then(response => {
         const familyMembers = response.data.data.filter(user => user.role === "family_member");
         setResidents(familyMembers);

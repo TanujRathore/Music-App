@@ -44,7 +44,7 @@ export default function MusicListHome() {
       try {
         // Fetch user details
         const userResponse = await axios.get(
-          "http://127.0.0.1:8000/user/manage/"
+          process.env.REACT_APP_BACKEND_URL+"user/manage/"
         );
         const userDetail = userResponse.data.data.find(
           (user) => user.username === username
@@ -57,7 +57,7 @@ export default function MusicListHome() {
 
         // Fetch music list details
         const musicListResponse = await axios.patch(
-          "http://127.0.0.1:8000/musiclist/",
+          process.env.REACT_APP_BACKEND_URL+"musiclist/",
           {
             username: username,
           }
@@ -85,7 +85,7 @@ export default function MusicListHome() {
   useEffect(() => {
     const fetchPlaylistImages = async () => {
       try {
-        const response = await axios.patch("http://127.0.0.1:8000/musiclist/", {
+        const response = await axios.patch(process.env.REACT_APP_BACKEND_URL+"musiclist/", {
           username: username,
         });
 
@@ -133,7 +133,7 @@ export default function MusicListHome() {
 
     // get signedUrl from backend
     try {
-      const response = await axios.patch("http://127.0.0.1:8000/upload/", {
+      const response = await axios.patch(process.env.REACT_APP_BACKEND_URL+"upload/", {
         MusicListID: musicListIDs[selectedPlaylistName],
         fileType: file.type,
       });
