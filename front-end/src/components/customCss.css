@@ -2,8 +2,14 @@
     background-color: rgba(255, 255, 255, 0.2); 
     padding: 10px;
     border-color: #ffffff;
-    width: 500px;
+    width: 100%;
  }
+
+ @media (min-width: 768px) {
+  .custom-card {
+      width: 30vw;
+  }
+}
 
  .custom-cardheader {
     background-color: #ffffff;
