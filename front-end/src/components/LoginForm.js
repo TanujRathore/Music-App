@@ -67,7 +67,7 @@ export default function LoginForm() {
       </div>
       <Row className="w-100 justify-content-center">
         <Col xs={12} md={6}>
-          <Card className="p-4 custom-card">
+          <Card className="custom-card">
             <Card.Header className="text-center custom-cardheader">Login - Staff</Card.Header>
             <Card.Body>
               <Form onSubmit={handleFormSubmit} data-role="staff">
@@ -90,7 +90,7 @@ export default function LoginForm() {
           </Card>
         </Col>
         <Col xs={12} md={6}>
-          <Card className="p-4 custom-card">
+          <Card className="custom-card">
             <Card.Header className="text-center custom-cardheader">Login - Family Member</Card.Header>
             <Card.Body>
               <Form onSubmit={handleFormSubmit} data-role="family_member">
