@@ -1,8 +1,5 @@
 # MusicPlayer_React_Django_Rest_Sqlite
 
-## Overview
-
-A music player application built with React for the frontend and Django Rest Framework for the backend, utilizing SQLite as the database.
 
 ## Table of Contents
 
@@ -10,9 +7,12 @@ A music player application built with React for the frontend and Django Rest Fra
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Setup and Installation](#setup-and-installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- [Database update](#update-database-with-model-changes-in-django)
+
+## Overview
+
+A music player application built with React for the frontend and Django Rest Framework for the backend, utilizing SQLite as the database.
+
 
 ## Features
 
@@ -35,11 +35,33 @@ A music player application built with React for the frontend and Django Rest Fra
 - Python
 - Pipenv or virtualenv
 
+
+### Fronted Setup
+
+Navigate to the `front-end` directory and follow the steps:
+
+1. Install Dependencies
+   ```sh
+   npm install
+2. run front-end test server
+   ```sh
+   npm start
 ### Backend Setup
 
 Navigate to the `back-end` directory and follow the steps:
 
-1. Create a virtual environment and activate it:
+1. Create a virtual environment and activate it
+2. Install Dependencies
    ```sh
-   python -m venv venv
-   source venv/bin/activate  # For Windows use `venv\Scripts\activate`
+   pip install -r requirements.txt
+3. run back-end test server
+   ```sh
+   python manage.py runserver
+### Update Database with Model Changes in Django
+
+1. Run the makemigrations command
+   ```sh
+   python manage.py makemigrations
+2. Execute the migrate command
+   ```sh
+   python manage.py migrate
