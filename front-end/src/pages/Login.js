@@ -22,6 +22,10 @@ export default function Login() {
                 <img src={backButtonIcon} alt="Back to Music List Home" style={{ width: '30px', height: '30px' }} />
             </Link>
       </div>
+      <div className="text-center mt-3">
+        Haven't had an account?
+        <a href="/signup"> Sign up Now</a>
+      </div>
     </div>
   );
 }
