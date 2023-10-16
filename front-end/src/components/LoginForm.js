@@ -128,7 +128,7 @@ export default function LoginForm() {
       </Row>
       <div className="text-center mt-3">
         Haven't had an account?
-        <a href="/signup"> Sign up Now</a>
+        <a href="/login/signup"> Sign up Now</a>
       </div>
       <div className="custom-toast">
         <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide>
