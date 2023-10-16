@@ -23,6 +23,14 @@ export default function LoginForm() {
     }
   }, [error]);
 
+
+  const handleNavigation = (event) => {
+    event.preventDefault();
+    navigate('/');
+    setTimeout(() => {
+        navigate('/signup');
+    }, 50);
+};
   const handleStaffUsernameChange = (event) => {
     setStaffUsername(event.target.value);
   };
@@ -127,8 +135,8 @@ export default function LoginForm() {
         </Col>
       </Row>
       <div className="text-center mt-3">
-        Haven't had an account?
-        <a href="/signup"> Sign up Now</a>
+            Haven't had an account?
+            <a href="/signup" onClick={handleNavigation}> Sign up Now</a>
       </div>
       <div className="custom-toast">
         <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide>
