@@ -23,6 +23,7 @@ function App() {
         <Route path="/MusicListHome/:username" element={<MusicListHome />} />
         <Route path="/MusicListHome/:username/:playlistName" element={<PlaylistComponent/>} />
         <Route path="/PublicMusicLibrary/:username" element={<PublicMusicLibrary />} />
+        <Route path="/login/signup" element={<Signup />} />
         </Routes>
       </UserProvider>
     </Router>
