@@ -72,7 +72,7 @@ export default function SignupForm() {
     }
   };
   return (
-    <Card className="p-4 custom-card">
+    <Card className="p-4 custom-card2">
       <Card.Header className="text-center custom-cardheader">Sign Up</Card.Header>
       <Card.Body>
         <Form onSubmit={handleFormSubmit}>

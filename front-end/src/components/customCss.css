@@ -4,11 +4,17 @@
     border-color: #ffffff;
     width: 100%;
  }
-
  @media (min-width: 768px) {
   .custom-card {
       width: 30vw;
   }
+}
+
+.custom-card2 {
+  background-color: rgba(255, 255, 255, 0.2); 
+  padding: 10px;
+  border-color: #ffffff;
+  width: 100%;
 }
 
  .custom-cardheader {
