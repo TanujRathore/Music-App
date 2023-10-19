@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col, Card, Form, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Pagination, Button} from 'react-bootstrap';
 import axios from 'axios';
 import backgroundImage from '../images/bluebackground.png';
 import LogoutNavbar from '../navibars/LogoutNavbar';
@@ -18,6 +18,7 @@ function ResidentPage() {
   const [residents, setResidents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [refereshPage, setRefereshPage] = useState(0);
 
   useEffect(() => {
     axios.get(process.env.REACT_APP_BACKEND_URL+'user/manage/')
@@ -28,11 +29,25 @@ function ResidentPage() {
       .catch(error => {
         console.error('Error fetching data:', error);
       });
-}, [])
+}, [refereshPage])
   const handleSearch = (e) => {
     e.preventDefault();
     setCurrentPage(1);
   };
+  function handleDelete(event,username) {
+    event.stopPropagation();
+    console.log(username);
+    axios.delete(process.env.REACT_APP_BACKEND_URL+'user/manage/'+username)
+      .then(response => {
+        // Handle success response
+        console.log(response.data.message);
+        setRefereshPage(refereshPage => refereshPage + 1)
+      })
+      .catch(error => {
+        // Handle error response
+        console.error('Error fetching data:', error);
+      });
+  }
 
   const filteredResidents = residents.filter(resident => {
     const fullName = `${resident.firstname} ${resident.lastname}`.toLowerCase();
@@ -44,7 +59,7 @@ function ResidentPage() {
   const currentResidents = filteredResidents.slice(indexOfFirstResident, indexOfLastResident);
 
   const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    
   };
 
   return (
@@ -70,16 +85,25 @@ function ResidentPage() {
           <Row>
             {currentResidents.map(resident => (
               <Col key={resident.username} md={4} sm={6} xs={12}>
-               {<Link to={`/MusicListHome/${resident.username}`} className="text-decoration-none">
-                  <Card className="mb-4 resident-card">
-                    <Card.Body>
-                      <Card.Title className="resident-title">{resident.firstname} {resident.lastname}</Card.Title>
-                      <Card.Text>
-                        Username: {resident.username}
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                </Link> }
+                <Card className="mb-4 resident-card">
+                  <Card.Body className="d-flex align-items-center justify-content-between">
+                    <div>
+                      <Link to={`/MusicListHome/${resident.username}`} className="text-decoration-none">
+                        <Card.Title className="resident-title">{resident.firstname} {resident.lastname}</Card.Title>
+                        <Card.Text>
+                          Username: {resident.username}
+                        </Card.Text>
+                      </Link>
+                    </div>
+                    <Button 
+                      variant="danger" 
+                      onClick={(e) => handleDelete(e, resident.username)}
+                      className="ml-2"
+                    >
+                      Delete
+                    </Button>
+                  </Card.Body>
+                </Card>
               </Col>
             ))}
           </Row>
