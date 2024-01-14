@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Card, Form, Button, Row, Col, Modal, Toast } from 'react-bootstrap';
 import UserContext from '../usercontext';
-import logoImage from '../images/MLH-Logo.jpg';
+import logoImage from '../images/MLH-Logo.svg';
 import './customCss.css';
 import { useNavigate } from 'react-router-dom';
 

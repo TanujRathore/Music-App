@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Card, Button, Navbar, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import backgroundImage from '../images/bluebackground.png';
-import logoImage from '../images/MLH-Logo.jpg';
+import logoImage from '../images/MLH-Logo.svg';
 import image1 from '../images/Music-Therapy.jpg';
 import image2 from '../images/Martin-Luther-view-village_small-scaled.jpg';
 
@@ -40,15 +40,6 @@ function Home() {
                     <Row className="justify-content-center mt-5">
                         <Col xs={12} md={6}>
                             <Card>
-                                <Carousel>
-                                    <Carousel.Item>
-                                        <Card.Img className="mb-3" variant="top" src={image1} style={{ width: '100%', height: '300px' }}/>
-                                    </Carousel.Item>
-                                    <Carousel.Item>
-                                        <Card.Img className="mb-3" variant="top" src={image2} style={{ width: '100%', height: '300px' }}/>
-                                    </Carousel.Item>
-                                    {/* Add more Carousel.Item with different images as needed */}
-                                </Carousel>
                                 <Card.Body>
                                     <Card.Title className="text-center custom-font1">Welcome to Music Library</Card.Title>
                                     <Card.Text className="text-center custom-font2">

@@ -4,7 +4,7 @@ import { Navbar, Container, Button, Toast } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import logoImage from "../images/MLH-Logo.jpg";
+import logoImage from "../images/MLH-Logo.svg";
 import staffmainIcon from "../images/staffmain.png";
 import "../components/customCss.css";
 

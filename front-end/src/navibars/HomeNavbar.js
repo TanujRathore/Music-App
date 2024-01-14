@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Container, Button } from 'react-bootstrap';
-import logoImage from '../images/MLH-Logo.jpg';
+import logoImage from '../images/MLH-Logo.svg';
 import '../components/customCss.css';
 
 export default function HomeNavbar() {
