@@ -1,40 +1,22 @@
-# MusicPlayer_React_Django_Rest_Sqlite
+# Music App
 
+A music app used build using the React and Django.which display the following features:
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Setup and Installation](#setup-and-installation)
-- [Database update](#update-database-with-model-changes-in-django)
-
-## Overview
-
-A music player application built with React for the frontend and Django Rest Framework for the backend, utilizing SQLite as the database.
-
-
-## Features
-
-- **User Authentication**: Sign up and log in functionality.
-- **Music Playback**: Play, pause, and navigate through the music tracks.
-- (Add more features as per your application)
+* Login/singup for user to use the app.
+* 4 different songs field according to user mood.
+* Play, pause, and navigate through music track.
+* Creat Playlist.
+* Add / Delete songs to Playlist.
+* Logout from the session .
 
 ## Technologies Used
 
 - **Frontend**: React.js
 - **Backend**: Django Rest Framework
 - **Database**: SQLite
-- **CI/CD**: GitHub Actions (as inferred from `.github/workflows/django.yml`)
+
 
 ## Setup and Installation
-
-### Prerequisites
-
-- Node.js
-- Python
-- Pipenv or virtualenv
-
 
 ### Fronted Setup
 
@@ -42,7 +24,7 @@ Navigate to the `front-end` directory and follow the steps:
 
 1. Install Dependencies
    ```sh
-   npm install
+   npm i
 2. run front-end test server
    ```sh
    npm start
